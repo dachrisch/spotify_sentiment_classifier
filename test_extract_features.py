@@ -1,9 +1,13 @@
+import logging
+import sys
 import unittest
 
 from classify.classify import FeatureClassifier, SpotifyMoodClassification
 from classify.sentiment import Sentiment
 from fixures.spotify import SpotifyTestConnector
 from spotify.playlist import PlaylistManager
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 
 class ExtractFeaturesTest(unittest.TestCase):
