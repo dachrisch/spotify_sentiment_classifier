@@ -1,0 +1,40 @@
+{
+  "href": "https://api.spotify.com/v1/me/tracks?offset=0&limit=20",
+  "items": [
+    {
+      "track": {
+        "id": "6lXKNdOsnaLv9LwulZbxNl",
+        "name": "depression"
+      }
+    },
+    {
+      "track": {
+        "id": "2p9RbgJwcuxMrQBhdDDA3p",
+        "name": "bargaining"
+      }
+    },
+    {
+      "track": {
+        "id": "3MVbvj0L7RTJy2CZYtf2c7",
+        "name": "denial"
+      }
+    },
+    {
+      "track": {
+        "id": "5AIYDx0HUjra5Bn0vZtjmd",
+        "name": "acceptance"
+      }
+    },
+    {
+      "track": {
+        "id": "2rnuW7ZTLSWT54yYvVaKT1",
+        "name": "anger"
+      }
+    }
+  ],
+  "limit": 20,
+  "next": "https://api.spotify.com/v1/me/tracks?offset=20&limit=20",
+  "offset": 0,
+  "previous": null,
+  "total": 2
+}
