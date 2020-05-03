@@ -7,8 +7,6 @@ from spotify.playlist import PlaylistManager
 
 
 class FeatureClassifier(object):
-    def __init__(self, spotify_connector: spotipy.Spotify):
-        self.spotify_connector = spotify_connector
 
     def classify(self, song_feature):
         valence = song_feature['valence']
@@ -32,6 +30,8 @@ class SpotifyMoodClassification(object):
         self.log = logging.getLogger(__name__)
 
     def perform(self):
+        self.playlist_manager.create_playlists()
+
         all_song_ids = set(map(lambda x: x['track']['id'], self.spotify_connector.current_user_saved_tracks()['items']))
 
         self.log.info('analyzing [%s] current songs for sentiment...' % (len(all_song_ids)))

@@ -1,12 +1,20 @@
+import logging
+import sys
+
 import spotipy
 import spotipy.util as util
 
+from classify.classify import SpotifyMoodClassification, FeatureClassifier
+
 
 def main():
-    token = util.prompt_for_user_token('1121820983', 'user-library-read')
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
+    # https://developer.spotify.com/documentation/general/guides/scopes/#playlist-modify-private
+    token = util.prompt_for_user_token('1121820983', 'user-library-read playlist-modify-private')
     sp = spotipy.Spotify(auth=token)
 
-    print(sp.audio_features(map(lambda x: x['track']['id'], sp.current_user_saved_tracks()['items'])))
+    SpotifyMoodClassification(sp, FeatureClassifier()).perform()
 
 
 if __name__ == '__main__':
