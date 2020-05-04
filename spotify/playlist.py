@@ -18,7 +18,7 @@ class PlaylistManager(object):
         return self.spotify_connector.current_user_playlists()['items']
 
     def create_playlists(self):
-        mood_lists = (self._to_playlist(sentiment) for sentiment in Sentiment)
+        mood_lists = (self.to_playlist(sentiment) for sentiment in Sentiment)
         available_playlist_names = self.available_playlist_names()
         for list_name in filter(lambda x: x not in available_playlist_names, mood_lists):
             self.log.debug('creating playlist [%s]' % list_name)
@@ -34,7 +34,7 @@ class PlaylistManager(object):
                                                         self.__playlist_ids[sentiment], song_ids)
 
     @staticmethod
-    def _to_playlist(sentiment: Sentiment):
+    def to_playlist(sentiment: Sentiment):
         return {
             Sentiment.DENIAL: 'gm_mood_1',
             Sentiment.ANGER: 'gm_mood_2',
@@ -49,7 +49,7 @@ class PlaylistManager(object):
         playlists = self._available_playlists()
         playlist_mapping = {}
         for sentiment in Sentiment:
-            sentiment_playlist = list(filter(lambda x: x['name'] == self._to_playlist(sentiment), playlists))
+            sentiment_playlist = list(filter(lambda x: x['name'] == self.to_playlist(sentiment), playlists))
             playlist_mapping[sentiment] = sentiment_playlist[0]['id']
 
         return playlist_mapping

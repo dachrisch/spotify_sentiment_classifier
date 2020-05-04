@@ -29,6 +29,6 @@ if __name__ == '__main__':
     sp = spotipy.Spotify(auth=token)
 
     for playlist in all_items(sp.current_user_playlists):
-        if playlist['name'] in (PlaylistManager._to_playlist(sentiment) for sentiment in Sentiment):
+        if playlist['name'] in (PlaylistManager.to_playlist(sentiment) for sentiment in Sentiment):
             print('delete %s' % playlist)
             sp.user_playlist_unfollow('1121820983', playlist['id'])

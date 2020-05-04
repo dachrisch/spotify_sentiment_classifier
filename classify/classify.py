@@ -8,7 +8,8 @@ from spotify.playlist import PlaylistManager
 
 class FeatureClassifier(object):
 
-    def classify(self, song_feature):
+    @staticmethod
+    def classify(song_feature):
         valence = song_feature['valence']
         if 0 <= valence < .2:
             return Sentiment.DEPRESSION

@@ -20,7 +20,7 @@ class PlaylistManagerTest(unittest.TestCase):
     def test_create_playlists_when_empty(self):
         playlist_manager = PlaylistManager(SpotifyTestConnector())
         playlist_manager.create_playlists()
-        self.assertEqual(set(playlist_manager._to_playlist(sentiment) for sentiment in Sentiment),
+        self.assertEqual(set(playlist_manager.to_playlist(sentiment) for sentiment in Sentiment),
                          set(playlist_manager.available_playlist_names()))
 
     def test_create_playlists_when_not_empty(self):
@@ -28,7 +28,7 @@ class PlaylistManagerTest(unittest.TestCase):
         test_connector.playlists['items'].append({'name': 'gm_mood_1', 'id': 1})
         playlist_manager = PlaylistManager(test_connector)
         playlist_manager.create_playlists()
-        self.assertEqual(set(playlist_manager._to_playlist(sentiment) for sentiment in Sentiment),
+        self.assertEqual(set(playlist_manager.to_playlist(sentiment) for sentiment in Sentiment),
                          set(playlist_manager.available_playlist_names()))
 
     def test_add_song_to_sentiment_playlist(self):

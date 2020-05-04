@@ -1,14 +1,11 @@
 import json
-import math
 import random
 
 import spotipy
 
-from classify.sentiment import Sentiment
-from spotify.playlist import PlaylistManager
-
 
 class SpotifyTestConnector(spotipy.Spotify):
+    # noinspection PyMissingConstructor
     def __init__(self):
         self._session = None
         self.playlists = {'items': []}
@@ -23,9 +20,9 @@ class SpotifyTestConnector(spotipy.Spotify):
                 'id': '1121820983', 'images': [], 'type': 'user', 'uri': 'spotify:user:1121820983'}
 
     def user_playlist_create(self, user, name, public=True, description=""):
-        self.playlists['items'].append({'name': name, 'id': random.randint(0,100000)})
+        self.playlists['items'].append({'name': name, 'id': random.randint(0, 100000)})
 
-    def audio_features(self, tracks=[]):
+    def audio_features(self, tracks=None):
         with open('../fixures/user_tracks_features.json5', 'r') as tracks_features:
             return json.load(tracks_features)
 
@@ -41,7 +38,7 @@ class SpotifyTestConnector(spotipy.Spotify):
     def user_playlist_add_tracks(self, user, playlist_id, tracks, position=None):
         for track in tracks:
             if playlist_id not in self.songs_in_playlists:
-                self.songs_in_playlists[playlist_id] = {'items':[]}
+                self.songs_in_playlists[playlist_id] = {'items': []}
             self.songs_in_playlists[playlist_id]['items'].append(
                 {'track': {'id': track, 'name': playlist_id}})
 
