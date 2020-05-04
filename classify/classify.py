@@ -9,8 +9,8 @@ from spotify.playlist import PlaylistManager
 class FeatureClassifier(object):
 
     @staticmethod
-    def classify(song_feature):
-        valence = song_feature['valence']
+    def classify(track_feature):
+        valence = track_feature['valence']
         if 0 <= valence < .2:
             return Sentiment.DEPRESSION
         elif .2 <= valence < .4:
@@ -33,16 +33,17 @@ class SpotifyMoodClassification(object):
     def perform(self):
         self.playlist_manager.create_playlists()
 
-        all_song_ids = set(map(lambda x: x['track']['id'], self.spotify_connector.current_user_saved_tracks()['items']))
+        all_tracks = tuple(map(lambda x: x['track'], self.spotify_connector.current_user_saved_tracks()['items']))
+        all_tracks_ids = tuple(map(lambda x: x['id'], all_tracks))
 
-        self.log.info('analyzing [%s] current songs for sentiment...' % (len(all_song_ids)))
-        all_song_features = self.spotify_connector.audio_features(all_song_ids)
+        self.log.info('analyzing [%s] tracks for sentiment...' % (len(all_tracks_ids)))
+        all_tracks_features = self.spotify_connector.audio_features(all_tracks_ids)
 
         for sentiment in Sentiment:
-            songs_in_sentiment = tuple(
-                filter(lambda song_features: self.classifier.classify(song_features) == sentiment, all_song_features))
-            self.log.debug('songs found for sentiment [%s]: %d' % (sentiment.name, len(songs_in_sentiment)))
-            self.playlist_manager.add_songs_to_playlist(
-                set(map(lambda song_features: song_features['id'],
-                        songs_in_sentiment)),
-                sentiment)
+            tracks_features_in_sentiment = tuple(
+                filter(lambda x: self.classifier.classify(x) == sentiment, all_tracks_features))
+            track_ids_in_sentiment = set(map(lambda x: x['id'], tracks_features_in_sentiment))
+            self.log.info('tracks found for [%s]: %d' % (sentiment.name, len(tracks_features_in_sentiment)))
+            self.log.debug(list(map(lambda y: {'id': y['id'], 'name': y['name']},
+                                    filter(lambda x: x['id'] in track_ids_in_sentiment, all_tracks))))
+            self.playlist_manager.add_tracks_to_playlist(track_ids_in_sentiment, sentiment)

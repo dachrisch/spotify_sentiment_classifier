@@ -24,14 +24,14 @@ class PlaylistManager(object):
             self.log.debug('creating playlist [%s]' % list_name)
             self.spotify_connector.user_playlist_create(self.spotify_connector.current_user()['id'], list_name, False)
 
-    def songs_in_playlist(self, sentiment: Sentiment):
+    def tracks_in_playlist(self, sentiment: Sentiment):
         return self.spotify_connector.playlist_tracks(self.__playlist_ids[sentiment], fields='items(track(name,id))')[
             'items']
 
-    def add_songs_to_playlist(self, song_ids, sentiment: Sentiment):
-        self.log.debug('adding [%d] songs to playlist [%s]' % (len(song_ids), sentiment))
+    def add_tracks_to_playlist(self, track_ids, sentiment: Sentiment):
+        self.log.debug('adding [%d] tracks to playlist [%s]' % (len(track_ids), self.__playlist_ids[sentiment]))
         self.spotify_connector.user_playlist_add_tracks(self.spotify_connector.current_user()['id'],
-                                                        self.__playlist_ids[sentiment], song_ids)
+                                                        self.__playlist_ids[sentiment], track_ids)
 
     @staticmethod
     def to_playlist(sentiment: Sentiment):

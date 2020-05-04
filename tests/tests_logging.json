@@ -1,0 +1,42 @@
+{
+  "logging": {
+    "version": 1,
+    "disable_existing_loggers": true,
+    "formatters": {
+      "debug-logger": {
+        "class": "logging.Formatter",
+        "style": "{",
+        "datefmt": "%I:%M:%S",
+        "format": "{asctime}[{levelname:s}] File \"{pathname:s}\", line {lineno:d} : {message:s}"
+      },
+      "single-line": {
+        "class": "logging.Formatter",
+        "style": "{",
+        "datefmt": "%I:%M:%S",
+        "format": "[{levelname:s}] {asctime:s} {name:s}::{funcName:s}({lineno:d}): {message:s}"
+      }
+    },
+    "handlers": {
+      "debug-console": {
+        "level": "DEBUG",
+        "class": "logging.StreamHandler",
+        "formatter": "debug-logger",
+        "stream": "ext://sys.stdout"
+      }
+    },
+    "loggers": {
+      "spotify": {
+        "handlers": [
+          "debug-console"
+        ],
+        "level": "DEBUG"
+      },
+      "classify": {
+        "handlers": [
+          "debug-console"
+        ],
+        "level": "DEBUG"
+      }
+    }
+  }
+}

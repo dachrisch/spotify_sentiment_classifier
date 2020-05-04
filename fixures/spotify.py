@@ -9,7 +9,7 @@ class SpotifyTestConnector(spotipy.Spotify):
     def __init__(self):
         self._session = None
         self.playlists = {'items': []}
-        self.songs_in_playlists = {}
+        self.tracks_in_playlists = {}
 
     def current_user_playlists(self, limit=50, offset=0):
         return self.playlists
@@ -33,13 +33,13 @@ class SpotifyTestConnector(spotipy.Spotify):
                         offset=0,
                         market=None,
                         additional_types=("track",)):
-        return self.songs_in_playlists[playlist_id]
+        return self.tracks_in_playlists[playlist_id]
 
     def user_playlist_add_tracks(self, user, playlist_id, tracks, position=None):
         for track in tracks:
-            if playlist_id not in self.songs_in_playlists:
-                self.songs_in_playlists[playlist_id] = {'items': []}
-            self.songs_in_playlists[playlist_id]['items'].append(
+            if playlist_id not in self.tracks_in_playlists:
+                self.tracks_in_playlists[playlist_id] = {'items': []}
+            self.tracks_in_playlists[playlist_id]['items'].append(
                 {'track': {'id': track, 'name': playlist_id}})
 
     def current_user_saved_tracks(self, limit=20, offset=0):
