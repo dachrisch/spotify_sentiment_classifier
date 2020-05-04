@@ -18,20 +18,6 @@ class ExtractFeaturesTest(unittest.TestCase):
 
 
 class PlaylistManagerTest(unittest.TestCase):
-    def test_create_playlists_when_empty(self):
-        playlist_manager = PlaylistManager(SpotifyTestConnector())
-        playlist_manager.create_playlists()
-        self.assertEqual(set(playlist_manager.to_playlist(sentiment) for sentiment in Sentiment),
-                         set(playlist_manager.available_playlist_names()))
-
-    def test_create_playlists_when_not_empty(self):
-        test_connector = SpotifyTestConnector()
-        test_connector.playlists['items'].append({'name': 'gm_mood_1', 'id': 1})
-        playlist_manager = PlaylistManager(test_connector)
-        playlist_manager.create_playlists()
-        self.assertEqual(set(playlist_manager.to_playlist(sentiment) for sentiment in Sentiment),
-                         set(playlist_manager.available_playlist_names()))
-
     def test_add_track_to_sentiment_playlist(self):
         playlist_manager = PlaylistManager(SpotifyTestConnector())
         playlist_manager.add_tracks_to_playlist(('2p9RbgJwcuxasdMrQBdDDA3p',), Sentiment.BARGAINING)

@@ -19,6 +19,12 @@
       }
     },
     "loggers": {
+      "spotipy": {
+        "handlers": [
+          "debug-console"
+        ],
+        "level": "DEBUG"
+      },
       "spotify": {
         "handlers": [
           "debug-console"
