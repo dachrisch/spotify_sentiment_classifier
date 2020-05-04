@@ -24,8 +24,7 @@ class FeatureClassifier(object):
 
 
 class SpotifyMoodClassification(object):
-    def __init__(self, spotify_connector: spotipy.Spotify, classifier: FeatureClassifier):
-        self.classifier = classifier
+    def __init__(self, spotify_connector: spotipy.Spotify):
         self.spotify_connector = spotify_connector
         self.playlist_manager = PlaylistManager(self.spotify_connector)
         self.log = logging.getLogger(__name__)
@@ -41,7 +40,7 @@ class SpotifyMoodClassification(object):
 
         for sentiment in Sentiment:
             tracks_features_in_sentiment = tuple(
-                filter(lambda x: self.classifier.classify(x) == sentiment, all_tracks_features))
+                filter(lambda x: FeatureClassifier.classify(x) == sentiment, all_tracks_features))
             track_ids_in_sentiment = set(map(lambda x: x['id'], tracks_features_in_sentiment))
             self.log.info('tracks found for [%s]: %d' % (sentiment.name, len(tracks_features_in_sentiment)))
             self.log.debug(list(map(lambda y: {'id': y['id'], 'name': y['name']},
