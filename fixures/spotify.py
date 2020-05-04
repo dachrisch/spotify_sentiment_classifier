@@ -1,4 +1,6 @@
 import json
+import math
+import random
 
 import spotipy
 
@@ -8,10 +10,9 @@ from spotify.playlist import PlaylistManager
 
 class SpotifyTestConnector(spotipy.Spotify):
     def __init__(self):
-        self.playlists = {'items': []}
-        self.songs_in_playlists = {PlaylistManager(self)._to_playlist(sentiment): {'items': []} for sentiment in
-                                   Sentiment}
         self._session = None
+        self.playlists = {'items': []}
+        self.songs_in_playlists = {}
 
     def current_user_playlists(self, limit=50, offset=0):
         return self.playlists
@@ -22,7 +23,7 @@ class SpotifyTestConnector(spotipy.Spotify):
                 'id': '1121820983', 'images': [], 'type': 'user', 'uri': 'spotify:user:1121820983'}
 
     def user_playlist_create(self, user, name, public=True, description=""):
-        self.playlists['items'].append({'name': name})
+        self.playlists['items'].append({'name': name, 'id': random.randint(0,100000)})
 
     def audio_features(self, tracks=[]):
         with open('../fixures/user_tracks_features.json5', 'r') as tracks_features:
@@ -39,8 +40,10 @@ class SpotifyTestConnector(spotipy.Spotify):
 
     def user_playlist_add_tracks(self, user, playlist_id, tracks, position=None):
         for track in tracks:
+            if playlist_id not in self.songs_in_playlists:
+                self.songs_in_playlists[playlist_id] = {'items':[]}
             self.songs_in_playlists[playlist_id]['items'].append(
-                {'track': {'id': track, 'name': playlist_id.lower()}})
+                {'track': {'id': track, 'name': playlist_id}})
 
     def current_user_saved_tracks(self, limit=20, offset=0):
         with open('../fixures/current_user_tracks.json5', 'r') as user_tracks_file:

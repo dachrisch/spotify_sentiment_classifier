@@ -21,21 +21,21 @@ class PlaylistManagerTest(unittest.TestCase):
         playlist_manager = PlaylistManager(SpotifyTestConnector())
         playlist_manager.create_playlists()
         self.assertEqual(set(playlist_manager._to_playlist(sentiment) for sentiment in Sentiment),
-                         set(playlist_manager.available_playlists()))
+                         set(playlist_manager.available_playlist_names()))
 
     def test_create_playlists_when_not_empty(self):
         test_connector = SpotifyTestConnector()
-        test_connector.playlists['items'].append({'name': 'gm_mood_1'})
+        test_connector.playlists['items'].append({'name': 'gm_mood_1', 'id': 1})
         playlist_manager = PlaylistManager(test_connector)
         playlist_manager.create_playlists()
         self.assertEqual(set(playlist_manager._to_playlist(sentiment) for sentiment in Sentiment),
-                         set(playlist_manager.available_playlists()))
+                         set(playlist_manager.available_playlist_names()))
 
     def test_add_song_to_sentiment_playlist(self):
         playlist_manager = PlaylistManager(SpotifyTestConnector())
         playlist_manager.add_songs_to_playlist(('2p9RbgJwcuxasdMrQBdDDA3p',), Sentiment.BARGAINING)
-        self.assertIn({'track': {'id': '2p9RbgJwcuxasdMrQBdDDA3p', 'name': 'gm_mood_3'}},
-                      playlist_manager.songs_in_playlist(Sentiment.BARGAINING))
+        self.assertEqual('2p9RbgJwcuxasdMrQBdDDA3p',
+                         playlist_manager.songs_in_playlist(Sentiment.BARGAINING)[0]['track']['id'])
 
 
 class SpotifyMoodClassificationTest(unittest.TestCase):
@@ -43,16 +43,16 @@ class SpotifyMoodClassificationTest(unittest.TestCase):
         test_connector = SpotifyTestConnector()
         SpotifyMoodClassification(test_connector, FeatureClassifier()).perform()
 
-        self.assertIn({'track': {'id': '2p9RbgJwcuxMrQBhdDDA3p', 'name': 'gm_mood_3'}},
-                      PlaylistManager(test_connector).songs_in_playlist(Sentiment.BARGAINING))
-        self.assertIn({'track': {'id': '6lXKNdOsnaLv9LwulZbxNl', 'name': 'gm_mood_4'}},
-                      PlaylistManager(test_connector).songs_in_playlist(Sentiment.DEPRESSION))
-        self.assertIn({'track': {'id': '3MVbvj0L7RTJy2CZYtf2c7', 'name': 'gm_mood_1'}},
-                      PlaylistManager(test_connector).songs_in_playlist(Sentiment.DENIAL))
-        self.assertIn({'track': {'id': '5AIYDx0HUjra5Bn0vZtjmd', 'name': 'gm_mood_5'}},
-                      PlaylistManager(test_connector).songs_in_playlist(Sentiment.ACCEPTANCE))
-        self.assertIn({'track': {'id': '2rnuW7ZTLSWT54yYvVaKT1', 'name': 'gm_mood_2'}},
-                      PlaylistManager(test_connector).songs_in_playlist(Sentiment.ANGER))
+        self.assertEqual('2p9RbgJwcuxMrQBhdDDA3p',
+                         PlaylistManager(test_connector).songs_in_playlist(Sentiment.BARGAINING)[0]['track']['id'])
+        self.assertEqual('6lXKNdOsnaLv9LwulZbxNl',
+                         PlaylistManager(test_connector).songs_in_playlist(Sentiment.DEPRESSION)[0]['track']['id'])
+        self.assertEqual('3MVbvj0L7RTJy2CZYtf2c7',
+                         PlaylistManager(test_connector).songs_in_playlist(Sentiment.DENIAL)[0]['track']['id'])
+        self.assertEqual('5AIYDx0HUjra5Bn0vZtjmd',
+                         PlaylistManager(test_connector).songs_in_playlist(Sentiment.ACCEPTANCE)[0]['track']['id'])
+        self.assertEqual('2rnuW7ZTLSWT54yYvVaKT1',
+                         PlaylistManager(test_connector).songs_in_playlist(Sentiment.ANGER)[0]['track']['id'])
 
 
 if __name__ == '__main__':
