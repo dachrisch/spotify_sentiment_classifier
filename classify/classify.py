@@ -47,8 +47,7 @@ class SpotifyMoodClassification(object):
 
 
 class SpotifyAuthentificationService(object):
-    def for_user(self, user_id):
-        token = spotipy.util.prompt_for_user_token(user_id, 'user-library-read playlist-modify-private')
+    def with_token(self, token):
         sp = spotipy.Spotify(auth=token)
 
         return SpotifyMoodClassification(sp)

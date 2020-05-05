@@ -1,6 +1,9 @@
 import logging
 
+from flask import url_for
+from flask_dance.contrib.spotify import spotify
 from flask_restx import Resource
+from werkzeug.utils import redirect
 
 from api.restplus import api
 from classify.classify import SpotifyAuthentificationService
@@ -14,6 +17,9 @@ ns = api.namespace('sentiment', description='Sentiment Operations for Spotify')
 class Analyse(Resource):
     service = SpotifyAuthentificationService()
 
-    def post(self):
-        Analyse.service.for_user('1121820983').analyse()
+    def get(self):
+        if not spotify.authorized:
+            return redirect(url_for('spotify.login'))
+
+        Analyse.service.with_token(spotify.token).analyse()
         return 'Created'

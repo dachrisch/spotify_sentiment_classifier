@@ -1,5 +1,7 @@
 import unittest
 
+from flask_dance.consumer.storage import MemoryStorage
+
 from api.endpoints.sentiment import Analyse
 from app import create_app
 from classify.classify import SpotifyAuthentificationService, SpotifyMoodClassification
@@ -7,7 +9,7 @@ from fixures.spotify import SpotifyTestConnector
 
 
 class SpotifyAuthentificationTestService(SpotifyAuthentificationService):
-    def for_user(self, user_id):
+    def with_token(self, token):
         return SpotifyMoodClassification(SpotifyTestConnector())
 
 
@@ -15,15 +17,18 @@ class TestSentimentAnalyseApi(unittest.TestCase):
 
     def setUp(self):
         Analyse.service = SpotifyAuthentificationTestService()
-        self.app = create_app().test_client()
+        app = create_app()
+        storage = MemoryStorage({'access_token': 'fake-token'})
+        app.blueprints['spotify'].storage = storage
+        self.test_client = app.test_client()
 
     def test_homepage(self):
-        response = self.app.get('/', follow_redirects=True)
+        response = self.test_client.get('/', follow_redirects=False)
         self.assertEqual(200, response.status_code)
         self.assertIn(b'<a href="/api/sentiment/analyse">Analyze your Spotify Library</a>', response.data)
 
     def test_analyse(self):
-        response = self.app.post('/api/sentiment/analyse', follow_redirects=True)
+        response = self.test_client.get('/api/sentiment/analyse', follow_redirects=True)
         self.assertEqual(200, response.status_code)
         self.assertIn(b'"Created"', response.data)
 
