@@ -44,3 +44,11 @@ class SpotifyMoodClassification(object):
             self.log.debug(list(map(lambda y: {'id': y['id'], 'name': y['name']},
                                     filter(lambda x: x['id'] in track_ids_in_sentiment, all_tracks))))
             self.playlist_manager.add_tracks_to_playlist(track_ids_in_sentiment, sentiment)
+
+
+class SpotifyAuthentificationService(object):
+    def for_user(self, user_id):
+        token = spotipy.util.prompt_for_user_token(user_id, 'user-library-read playlist-modify-private')
+        sp = spotipy.Spotify(auth=token)
+
+        return SpotifyMoodClassification(sp)
