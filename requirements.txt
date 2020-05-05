@@ -2,4 +2,5 @@ spotipy
 flask
 flask_restx
 flask_dance
+flask_bootstrap
 pyopenssl
