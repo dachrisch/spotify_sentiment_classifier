@@ -4,10 +4,12 @@ import os
 from logging import config
 
 from flask import render_template, Flask, Blueprint
+from flask_bootstrap import Bootstrap
 from flask_dance.contrib.spotify import make_spotify_blueprint
 
 from api.restplus import api
 
+global user_token
 
 def create_app():
     flask_app = Flask(__name__)
@@ -21,8 +23,8 @@ def create_app():
                                                'user-library-read playlist-modify-private',
                                                os.getenv("SPOTIPY_REDIRECT_URI"))
 
-    flask_app.register_blueprint(spotify_blueprint)
-
+    flask_app.register_blueprint(spotify_blueprint, url_prefix='/login')
+    Bootstrap(flask_app)
     return flask_app
 
 

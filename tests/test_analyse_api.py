@@ -25,10 +25,10 @@ class TestSentimentAnalyseApi(unittest.TestCase):
     def test_homepage(self):
         response = self.test_client.get('/', follow_redirects=False)
         self.assertEqual(200, response.status_code)
-        self.assertIn(b'<a href="/api/sentiment/analyse">Analyze your Spotify Library</a>', response.data)
+        self.assertIn(b'<button class="btn-link"> Analyse Library</button>', response.data)
 
     def test_analyse(self):
-        response = self.test_client.get('/api/sentiment/analyse', follow_redirects=True)
+        response = self.test_client.post('/api/sentiment/analyse', follow_redirects=True)
         self.assertEqual(200, response.status_code)
         self.assertIn(b'"Created"', response.data)
 

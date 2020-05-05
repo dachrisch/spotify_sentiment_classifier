@@ -1,5 +1,5 @@
 spotipy
 flask
-flask_dance
+authlib
 flask_restx
 pyopenssl

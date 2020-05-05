@@ -23,25 +23,29 @@
         "handlers": [
           "debug-console"
         ],
-        "level": "DEBUG"
+        "level": "DEBUG",
+        "propagate": 0
       },
       "spotipy": {
         "handlers": [
           "debug-console"
         ],
-        "level": "DEBUG"
+        "level": "DEBUG",
+        "propagate": 0
       },
       "spotify": {
         "handlers": [
           "debug-console"
         ],
-        "level": "INFO"
+        "level": "INFO",
+        "propagate": 0
       },
       "classify": {
         "handlers": [
           "debug-console"
         ],
-        "level": "INFO"
+        "level": "INFO",
+        "propagate": 0
       }
     }
   }
