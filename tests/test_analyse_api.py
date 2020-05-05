@@ -17,9 +17,14 @@ class TestSentimentAnalyseApi(unittest.TestCase):
         Analyse.service = SpotifyAuthentificationTestService()
         self.app = create_app().test_client()
 
+    def test_homepage(self):
+        response = self.app.get('/', follow_redirects=True)
+        self.assertEqual(200, response.status_code)
+        self.assertIn(b'<a href="/api/sentiment/analyse">Analyze your Spotify Library</a>', response.data)
+
     def test_analyse(self):
         response = self.app.post('/api/sentiment/analyse', follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(200, response.status_code)
         self.assertIn(b'"Created"', response.data)
 
 
