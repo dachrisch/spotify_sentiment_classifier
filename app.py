@@ -3,13 +3,13 @@ import logging
 import os
 from logging import config
 
-from flask import render_template, Flask, Blueprint
+from flask import Flask, Blueprint
 from flask_bootstrap import Bootstrap
 from flask_dance.contrib.spotify import make_spotify_blueprint
 
 from api.restplus import api
+from web.views import HomeView, MoodPlayerView
 
-global user_token
 
 def create_app():
     flask_app = Flask(__name__)
@@ -18,21 +18,22 @@ def create_app():
 
     add_homepage(flask_app)
     app_api(flask_app)
+    app_spotify_login(flask_app)
 
-    spotify_blueprint = make_spotify_blueprint(os.getenv("SPOTIPY_CLIENT_ID"), os.getenv("SPOTIPY_CLIENT_SECRET"),
-                                               'user-library-read playlist-modify-private',
-                                               os.getenv("SPOTIPY_REDIRECT_URI"))
-
-    flask_app.register_blueprint(spotify_blueprint, url_prefix='/login')
     Bootstrap(flask_app)
     return flask_app
 
 
-def add_homepage(flask_app):
-    @flask_app.route('/')
-    def homepage():
-        return render_template('homepage.html')
+def app_spotify_login(flask_app):
+    spotify_blueprint = make_spotify_blueprint(os.getenv("SPOTIPY_CLIENT_ID"), os.getenv("SPOTIPY_CLIENT_SECRET"),
+                                               'user-library-read playlist-modify-private',
+                                               os.getenv("SPOTIPY_REDIRECT_URI"))
+    flask_app.register_blueprint(spotify_blueprint, url_prefix='/login')
 
+
+def add_homepage(flask_app):
+    HomeView.register(flask_app)
+    MoodPlayerView.register(flask_app)
 
 def app_api(flask_app):
     api_blueprint = Blueprint('api', __name__, url_prefix='/api')

@@ -9,10 +9,12 @@
 {% endblock %}
 
 {% block content %}
-<h1>First, lets get your library analysed</h1>
+<h1>Now, lets lets play some music</h1>
 <ul>
-    <li>{{utils.form_button(url_for('api.sentiment_analyse'), ' Analyse Library')}}</li>
-    <li><a href="{{url_for('MoodPlayerView:index')}}">Player</a></li>
-
+    {% for button, sentiment in button_sentiments.items() %}
+    <li>
+        <button class="btn {{button}}" type="button">{{sentiment}}</button>
+    </li>
+    {% endfor %}
 </ul>
 {% endblock %}

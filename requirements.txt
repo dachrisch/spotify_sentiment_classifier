@@ -3,4 +3,5 @@ flask
 flask_restx
 flask_dance
 flask_bootstrap
+flask_classful
 pyopenssl
