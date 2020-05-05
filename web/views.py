@@ -1,5 +1,7 @@
-from flask import render_template
+from flask import render_template, request
 from flask_classful import FlaskView
+from flask_wtf import FlaskForm
+from wtforms import HiddenField
 
 from classify.sentiment import Sentiment
 
@@ -24,4 +26,12 @@ class MoodPlayerView(FlaskView):
                 Sentiment.DEPRESSION: 'btn-primary',
                 Sentiment.ACCEPTANCE: 'btn-success',
             }[sentiment]] = sentiment.name
-        return render_template('mood_player.html', button_sentiments=button_sentiments)
+        return render_template('mood_player.html', button_sentiments=button_sentiments, form=SentimentForm())
+
+    def post(self):
+        form = SentimentForm(request.form)
+        return form.sentiment.data
+
+
+class SentimentForm(FlaskForm):
+    sentiment = HiddenField()

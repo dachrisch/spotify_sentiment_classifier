@@ -1,5 +1,6 @@
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/utils.html" as utils %}
+{% import "bootstrap/wtf.html" as wtf %}
 {% block title %}Spotify Sentiment Classifier{% endblock %}
 
 {% block navbar %}
@@ -12,9 +13,14 @@
 <h1>Now, lets lets play some music</h1>
 <ul>
     {% for button, sentiment in button_sentiments.items() %}
-    <li>
-        <button class="btn {{button}}" type="button">{{sentiment}}</button>
-    </li>
+    <form action="" class="form" method="post" role="form">
+        {{ form.csrf_token() }}
+        {{ form.sentiment(value=sentiment) }}
+        <li>
+            <input class="btn {{button}}" type="submit" value="{{sentiment}}">
+        </li>
+    </form>
     {% endfor %}
 </ul>
+
 {% endblock %}
