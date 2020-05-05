@@ -29,7 +29,7 @@ class SpotifyMoodClassification(object):
         self.playlist_manager = PlaylistManager(self.spotify_connector)
         self.log = logging.getLogger(__name__)
 
-    def perform(self):
+    def analyse(self):
         all_tracks = tuple(map(lambda x: x['track'], self.spotify_connector.current_user_saved_tracks()['items']))
         all_tracks_ids = tuple(map(lambda x: x['id'], all_tracks))
 

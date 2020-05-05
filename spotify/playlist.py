@@ -9,15 +9,17 @@ class PlaylistManager(object):
     log = logging.getLogger(__name__)
 
     def __init__(self, spotify_connector: spotipy.Spotify):
+        self.__playlist_ids = {}
         self.spotify_connector = spotify_connector
         self.user_id = self.spotify_connector.current_user()['id']
-        self.__playlist_ids = PlaylistManager.__obtain_playlists(self.spotify_connector, self.user_id)
 
     def tracks_in_playlist(self, sentiment: Sentiment):
-        return self.spotify_connector.playlist_tracks(self.__playlist_ids[sentiment], fields='items(track(name,id))')[
+        return self.spotify_connector.playlist_tracks(self.__playlist_id_for(sentiment), fields='items(track(name,id))')[
             'items']
 
     def add_tracks_to_playlist(self, track_ids, sentiment: Sentiment):
+        if sentiment not in self.__playlist_ids:
+            self.__playlist_ids[sentiment] = self.__create_playlist(sentiment)['id']
         self.log.debug('adding [%d] tracks to playlist [%s]' % (len(track_ids), self.__playlist_ids[sentiment]))
         self.spotify_connector.user_playlist_add_tracks(self.user_id, self.__playlist_ids[sentiment], track_ids)
 
@@ -35,18 +37,13 @@ class PlaylistManager(object):
     def map_names(dict_with_names: dict):
         return tuple(map(lambda x: x['name'], dict_with_names))
 
-    @staticmethod
-    def __create_playlists(spotify_connector: spotipy.Spotify, user_id: str, playlists: dict):
-        mood_lists = (PlaylistManager.to_playlist(sentiment) for sentiment in Sentiment)
-        available_playlist_names = PlaylistManager.map_names(playlists)
-        for list_name in filter(lambda x: x not in available_playlist_names, mood_lists):
-            PlaylistManager.log.debug('creating playlist [%s]' % list_name)
-            spotify_connector.user_playlist_create(user_id, list_name, False)
+    def __create_playlist(self, sentiment:Sentiment):
+        playlist_name = PlaylistManager.to_playlist(sentiment)
+        self.log.debug('creating playlist [%s]' % playlist_name)
+        return self.spotify_connector.user_playlist_create(self.user_id, playlist_name, False)
 
-    @staticmethod
-    def __obtain_playlists(spotify_connector: spotipy.Spotify, user_id: str):
-        playlists = spotify_connector.current_user_playlists()['items']
-        PlaylistManager.__create_playlists(spotify_connector, user_id, playlists)
+    def __obtain_playlists(self):
+        playlists = self.spotify_connector.current_user_playlists()['items']
 
         playlist_mapping = {}
         for sentiment in Sentiment:
@@ -54,3 +51,9 @@ class PlaylistManager(object):
             playlist_mapping[sentiment] = sentiment_playlist[0]['id']
 
         return playlist_mapping
+
+    def __playlist_id_for(self, sentiment:Sentiment):
+        if not self.__playlist_ids:
+            self.__playlist_ids = self.__obtain_playlists()
+
+        return self.__playlist_ids[sentiment]

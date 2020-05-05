@@ -29,7 +29,7 @@ class PlaylistManagerTest(unittest.TestCase):
 class SpotifyMoodClassificationTest(unittest.TestCase):
     def test_classify_and_add(self):
         test_connector = SpotifyTestConnector()
-        SpotifyMoodClassification(test_connector).perform()
+        SpotifyMoodClassification(test_connector).analyse()
 
         self.assertEqual('2p9RbgJwcuxMrQBhdDDA3p',
                          PlaylistManager(test_connector).tracks_in_playlist(Sentiment.BARGAINING)[0]['track']['id'])
