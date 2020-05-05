@@ -1,5 +1,6 @@
 import json
 import unittest
+from importlib import resources
 from logging import config
 
 from classify.classify import FeatureClassifier, SpotifyMoodClassification
@@ -7,7 +8,7 @@ from classify.sentiment import Sentiment
 from fixures.spotify import SpotifyTestConnector
 from spotify.playlist import PlaylistManager
 
-with open('tests_logging.json') as f:
+with resources.open_text('tests', 'tests_logging.json') as f:
     config.dictConfig(json.load(f)['logging'])
 
 

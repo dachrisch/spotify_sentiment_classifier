@@ -1,5 +1,6 @@
 import json
 import random
+from importlib import resources
 
 import spotipy
 
@@ -23,7 +24,7 @@ class SpotifyTestConnector(spotipy.Spotify):
         self.playlists['items'].append({'name': name, 'id': random.randint(0, 100000)})
 
     def audio_features(self, tracks=None):
-        with open('../fixures/user_tracks_features.json5', 'r') as tracks_features:
+        with resources.open_text('fixures', 'user_tracks_features.json5') as tracks_features:
             return json.load(tracks_features)
 
     def playlist_tracks(self,
@@ -43,5 +44,5 @@ class SpotifyTestConnector(spotipy.Spotify):
                 {'track': {'id': track, 'name': playlist_id}})
 
     def current_user_saved_tracks(self, limit=20, offset=0):
-        with open('../fixures/current_user_tracks.json5', 'r') as user_tracks_file:
+        with resources.open_text('fixures', 'current_user_tracks.json5') as user_tracks_file:
             return json.load(user_tracks_file)
