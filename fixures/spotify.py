@@ -6,8 +6,8 @@ import spotipy
 
 
 class SpotifyTestConnector(spotipy.Spotify):
-    # noinspection PyMissingConstructor
     def __init__(self):
+        super().__init__()
         self._session = None
         self.playlists = {'items': []}
         self.tracks_in_playlists = {}
