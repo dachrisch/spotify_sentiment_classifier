@@ -1,7 +1,6 @@
 import json
-import logging
 import os
-from logging import config
+from logging import config, getLogger
 
 from flask import Flask, Blueprint
 from flask_bootstrap import Bootstrap
@@ -35,6 +34,7 @@ def add_homepage(flask_app):
     HomeView.register(flask_app)
     MoodPlayerView.register(flask_app)
 
+
 def app_api(flask_app):
     api_blueprint = Blueprint('api', __name__, url_prefix='/api')
     api.init_app(api_blueprint)
@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
     app = create_app()
 
-    log = logging.getLogger(__name__)
-    log.debug('following endpoints are availabe')
+    log = getLogger(__name__)
+    log.debug('following endpoints are available')
     [log.debug(repr(p)) for p in app.url_map.iter_rules()]
     app.run(debug=True, ssl_context='adhoc')
