@@ -14,8 +14,12 @@ class PlaylistManager(object):
         self.user_id = self.spotify_connector.current_user()['id']
 
     def tracks_in_playlist(self, sentiment: Sentiment):
-        return self.spotify_connector.playlist_tracks(self.__playlist_id_for(sentiment), fields='items(track(name,id))')[
-            'items']
+        playlist_id_for_sentiment = self.__playlist_id_for(sentiment)
+        if playlist_id_for_sentiment:
+            return self.spotify_connector.playlist_tracks(playlist_id_for_sentiment, fields='items(track(name,id))')[
+                'items']
+        else:
+            return ()
 
     def add_tracks_to_playlist(self, track_ids, sentiment: Sentiment):
         if sentiment not in self.__playlist_ids:
@@ -37,7 +41,7 @@ class PlaylistManager(object):
     def map_names(dict_with_names: dict):
         return tuple(map(lambda x: x['name'], dict_with_names))
 
-    def __create_playlist(self, sentiment:Sentiment):
+    def __create_playlist(self, sentiment: Sentiment):
         playlist_name = PlaylistManager.to_playlist(sentiment)
         self.log.debug('creating playlist [%s]' % playlist_name)
         return self.spotify_connector.user_playlist_create(self.user_id, playlist_name, False)
@@ -48,12 +52,15 @@ class PlaylistManager(object):
         playlist_mapping = {}
         for sentiment in Sentiment:
             sentiment_playlist = list(filter(lambda x: x['name'] == PlaylistManager.to_playlist(sentiment), playlists))
-            playlist_mapping[sentiment] = sentiment_playlist[0]['id']
+            if sentiment_playlist:
+                playlist_mapping[sentiment] = sentiment_playlist[0]['id']
 
         return playlist_mapping
 
-    def __playlist_id_for(self, sentiment:Sentiment):
+    def __playlist_id_for(self, sentiment: Sentiment):
         if not self.__playlist_ids:
             self.__playlist_ids = self.__obtain_playlists()
 
+        if sentiment not in self.__playlist_ids:
+            return None
         return self.__playlist_ids[sentiment]

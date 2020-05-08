@@ -7,7 +7,7 @@ from flask_bootstrap import Bootstrap
 from flask_dance.contrib.spotify import make_spotify_blueprint
 
 from api.restplus import api
-from web.views import HomeView, MoodPlayerView
+from web.views import HomeView, MoodPlayerView, AnalyseView
 
 
 def create_app():
@@ -15,7 +15,7 @@ def create_app():
 
     flask_app.secret_key = '12345'
 
-    add_homepage(flask_app)
+    add_views(flask_app)
     app_api(flask_app)
     app_spotify_login(flask_app)
 
@@ -30,8 +30,9 @@ def app_spotify_login(flask_app):
     flask_app.register_blueprint(spotify_blueprint, url_prefix='/login')
 
 
-def add_homepage(flask_app):
+def add_views(flask_app):
     HomeView.register(flask_app)
+    AnalyseView.register(flask_app)
     MoodPlayerView.register(flask_app)
 
 

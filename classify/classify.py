@@ -45,6 +45,10 @@ class SpotifyMoodClassification(object):
                                     filter(lambda x: x['id'] in track_ids_in_sentiment, all_tracks))))
             self.playlist_manager.add_tracks_to_playlist(track_ids_in_sentiment, sentiment)
 
+    def is_analysed(self):
+        return 5 == len(
+            list(filter(lambda sentiment: len(self.playlist_manager.tracks_in_playlist(sentiment)) > 0, Sentiment)))
+
 
 class SpotifyAuthentificationService(object):
     def with_token(self, token):

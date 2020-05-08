@@ -42,6 +42,16 @@ class SpotifyMoodClassificationTest(unittest.TestCase):
         self.assertEqual('2rnuW7ZTLSWT54yYvVaKT1',
                          PlaylistManager(test_connector).tracks_in_playlist(Sentiment.ANGER)[0]['track']['id'])
 
+    def test_is_not_analysed(self):
+        self.assertFalse(SpotifyMoodClassification(SpotifyTestConnector()).is_analysed())
+
+    def test_is_analysed(self):
+        test_connector = SpotifyTestConnector()
+        playlist_manager = PlaylistManager(test_connector)
+        for sentiment in Sentiment:
+            playlist_manager.add_tracks_to_playlist(('2p9RbgJwcuxasdMrQBdDDA3p',), sentiment)
+        self.assertTrue(SpotifyMoodClassification(test_connector).is_analysed())
+
 
 if __name__ == '__main__':
     unittest.main()

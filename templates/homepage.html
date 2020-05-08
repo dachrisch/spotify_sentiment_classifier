@@ -10,11 +10,6 @@
 
 {% block content %}
 <!-- Banner -->
-<!--
-    To use a video as your background, set data-video to the name of your video without
-    its extension (eg. static/images/banner). Your video must be available in both .mp4 and .webm
-    formats to work correctly.
--->
 <section id="banner">
     <div class="inner">
         <header>
@@ -22,6 +17,7 @@
             <p>Music influences our mood in many situations, sometime consciously sometimes subtle. This app provides
                 support when going through times of a new beginning.</p>
         </header>
+        <p>Username: {{ username }}</p>
         <a class="more" href="#main">Get started</a>
     </div>
 </section>
@@ -36,14 +32,7 @@
             <div class="box">
                 <img alt="" src="static/images/pic01.jpg"/>
                 <div class="inner">
-                    <form action="https://accounts.spotify.com/en/authorize" class="no-padding" id="get-access-token">
-                        <input name="response_type" type="hidden" value="token"/>
-                        <input name="client_id" type="hidden" value="adaaf209fb064dfab873a71817029e0d"/>
-                        <input data-generate-redirect-uri="true" name="redirect_uri" type="hidden"/>
-                        <input name="scope" type="hidden"
-                               value="streaming user-read-email user-modify-playback-state user-read-private"/>
-                        <input name="show_dialog" type="hidden" value="true"/>
-
+                    <form action="{{ url_for('AnalyseView:post') }}" class="no-padding" method="post">
                         <button class="btn btn-primary btn-sm" type="submit">Analyse your music library
                         </button>
                     </form>
