@@ -2,12 +2,11 @@ import spotipy
 from flask import render_template, request, url_for
 from flask_classful import FlaskView
 from flask_dance.contrib.spotify import spotify
-from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
-from wtforms import HiddenField
 
 from api.endpoints.sentiment import Analyse
 from classify.sentiment import Sentiment
+from spotify.player import Player
 
 
 class HomeView(FlaskView):
@@ -36,22 +35,8 @@ class AnalyseView(FlaskView):
 class MoodPlayerView(FlaskView):
     route_base = '/player'
 
-    def index(self):
-        button_sentiments = {}
-        for sentiment in Sentiment:
-            button_sentiments[{
-                Sentiment.DENIAL: 'btn-danger',
-                Sentiment.ANGER: 'btn-warning',
-                Sentiment.BARGAINING: 'btn-info',
-                Sentiment.DEPRESSION: 'btn-primary',
-                Sentiment.ACCEPTANCE: 'btn-success',
-            }[sentiment]] = sentiment.name
-        return render_template('mood_player.html', button_sentiments=button_sentiments, form=SentimentForm())
-
     def post(self):
-        form = SentimentForm(request.form)
-        return form.sentiment.data
-
-
-class SentimentForm(FlaskForm):
-    sentiment = HiddenField()
+        pressed_button = request.args.get('depression_button')
+        sentiment = Sentiment.DEPRESSION
+        Player(spotipy.Spotify(spotify.token['access_token'])).queue_sentiment_playlist(sentiment)
+        return redirect(url_for('HomeView:index'))

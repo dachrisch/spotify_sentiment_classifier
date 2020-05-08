@@ -33,8 +33,9 @@
                 <img alt="" src="static/images/pic01.jpg"/>
                 <div class="inner">
                     <form action="{{ url_for('AnalyseView:post') }}" class="no-padding" method="post">
-                        <button %} %}disabled="disabled" class="btn btn-primary btn-sm" endif if
-                                is_analysedtype="submit" {% {%>Analyse your music library
+                        <button %} %}disabled="disabled" class="btn btn-primary btn-sm" endif if is_analysed
+                                type="submit"
+                                {% {%>Analyse your music library
                         </button>
                     </form>
                 </div>
@@ -44,46 +45,12 @@
             <div class="box">
                 <img alt="" src="static/images/pic02.jpg"/>
                 <div class="inner">
-                    <h3>Play a Song</h3>
-                    <script src="https://sdk.scdn.co/spotify-player.js"></script>
-                    <script>
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      const token = '[My Spotify Web API access token]';
-      const player = new Spotify.Player({
-        name: 'Web Playback SDK Quick Start Player',
-        getOAuthToken: cb => { cb(token); }
-      });
+                    <form action="{{ url_for('MoodPlayerView:post') }}" class="no-padding" method="post">
+                        <button class="btn btn-primary btn-sm" id="depression_button" type="submit" value="DEPRESSION">
+                            Play DEPRESSION song
+                        </button>
+                    </form>
 
-      // Error handling
-      player.addListener('initialization_error', ({ message }) => { console.error(message); });
-      player.addListener('authentication_error', ({ message }) => { console.error(message); });
-      player.addListener('account_error', ({ message }) => { console.error(message); });
-      player.addListener('playback_error', ({ message }) => { console.error(message); });
-
-      // Playback status updates
-      player.addListener('player_state_changed', state => { console.log(state); });
-
-      // Ready
-      player.addListener('ready', ({ device_id }) => {
-        console.log('Ready with Device ID', device_id);
-      });
-
-      // Not Ready
-      player.addListener('not_ready', ({ device_id }) => {
-        console.log('Device ID has gone offline', device_id);
-      });
-
-      // Connect to the player!
-      player.connect();
-    };
-
-
-
-
-
-
-
-                    </script>
                 </div>
             </div>
 

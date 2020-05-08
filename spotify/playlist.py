@@ -64,3 +64,6 @@ class PlaylistManager(object):
         if sentiment not in self.__playlist_ids:
             return None
         return self.__playlist_ids[sentiment]
+
+    def get_playlist_uri(self, sentiment):
+        return 'spotify:track:2DB2zVP1LVu6jjyrvqD44z'
