@@ -3,10 +3,11 @@ import unittest
 from importlib import resources
 from logging import config
 
-from classify.classify import FeatureClassifier, SpotifyMoodClassification
+from classify.classify import FeatureClassifier
 from classify.sentiment import Sentiment
 from fixures.spotify import SpotifyTestConnector
 from spotify.playlist import PlaylistManager
+from spotify.service import SpotifyMoodClassificationService
 
 with resources.open_text('tests', 'tests_logging.json') as f:
     config.dictConfig(json.load(f)['logging'])
@@ -29,7 +30,7 @@ class PlaylistManagerTest(unittest.TestCase):
 class SpotifyMoodClassificationTest(unittest.TestCase):
     def test_classify_and_add(self):
         test_connector = SpotifyTestConnector()
-        SpotifyMoodClassification(test_connector).analyse()
+        SpotifyMoodClassificationService(test_connector).analyse()
 
         self.assertEqual('2p9RbgJwcuxMrQBhdDDA3p',
                          PlaylistManager(test_connector).tracks_in_playlist(Sentiment.BARGAINING)[0]['track']['id'])
@@ -43,14 +44,14 @@ class SpotifyMoodClassificationTest(unittest.TestCase):
                          PlaylistManager(test_connector).tracks_in_playlist(Sentiment.ANGER)[0]['track']['id'])
 
     def test_is_not_analysed(self):
-        self.assertFalse(SpotifyMoodClassification(SpotifyTestConnector()).is_analysed())
+        self.assertFalse(SpotifyMoodClassificationService(SpotifyTestConnector()).is_analysed())
 
     def test_is_analysed(self):
         test_connector = SpotifyTestConnector()
         playlist_manager = PlaylistManager(test_connector)
         for sentiment in Sentiment:
             playlist_manager.add_tracks_to_playlist(('2p9RbgJwcuxasdMrQBdDDA3p',), sentiment)
-        self.assertTrue(SpotifyMoodClassification(test_connector).is_analysed())
+        self.assertTrue(SpotifyMoodClassificationService(test_connector).is_analysed())
 
 
 if __name__ == '__main__':

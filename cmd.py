@@ -4,7 +4,7 @@ from logging import config
 import spotipy
 import spotipy.util as util
 
-from classify.classify import SpotifyMoodClassification
+from spotify.service import SpotifyMoodClassificationService
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
     token = util.prompt_for_user_token('1121820983', 'user-library-read playlist-modify-private')
     sp = spotipy.Spotify(auth=token)
 
-    SpotifyMoodClassification(sp).analyse()
+    SpotifyMoodClassificationService(sp).analyse()
 
 
 if __name__ == '__main__':

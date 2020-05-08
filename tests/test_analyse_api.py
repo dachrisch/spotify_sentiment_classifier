@@ -4,13 +4,13 @@ from flask_dance.consumer.storage import MemoryStorage
 
 from api.endpoints.sentiment import Analyse
 from app import create_app
-from classify.classify import SpotifyAuthentificationService, SpotifyMoodClassification
 from fixures.spotify import SpotifyTestConnector
+from spotify.service import SpotifyAuthentificationService, SpotifyMoodClassificationService
 
 
 class SpotifyAuthentificationTestService(SpotifyAuthentificationService):
     def with_token(self, token):
-        return SpotifyMoodClassification(SpotifyTestConnector())
+        return SpotifyMoodClassificationService(SpotifyTestConnector())
 
 
 class TestSentimentAnalyseApi(unittest.TestCase):

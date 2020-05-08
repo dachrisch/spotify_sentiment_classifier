@@ -4,13 +4,14 @@ from flask_classful import FlaskView
 from flask_dance.contrib.spotify import spotify
 from werkzeug.utils import redirect
 
-from api.endpoints.sentiment import Analyse
 from classify.sentiment import Sentiment
 from spotify.player import Player
+from spotify.service import SpotifyAuthentificationService
 
 
 class HomeView(FlaskView):
     route_base = '/'
+    service = SpotifyAuthentificationService()
 
     def index(self):
         username = None
@@ -26,9 +27,10 @@ class HomeView(FlaskView):
 
 class AnalyseView(FlaskView):
     route = '/analyse'
+    service = SpotifyAuthentificationService()
 
     def post(self):
-        Analyse.service.with_token(spotify.token['access_token']).analyse()
+        AnalyseView.service.with_token(spotify.token['access_token']).analyse()
         return redirect(url_for('HomeView:index'))
 
 

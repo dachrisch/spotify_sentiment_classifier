@@ -7,7 +7,7 @@ from flask_restx import Resource
 from werkzeug.utils import redirect
 
 from api.restplus import api
-from classify.classify import SpotifyAuthentificationService
+from spotify.service import SpotifyAuthentificationService
 
 ns = api.namespace('sentiment', description='Sentiment Operations for Spotify')
 
