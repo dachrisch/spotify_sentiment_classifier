@@ -14,14 +14,21 @@ class TestSentimentAnalyseApi(unittest.TestCase):
     def setUp(self):
         HomeView.service = SpotifyAuthentificationTestService()
         app = create_app()
-        storage = MemoryStorage({'access_token': 'fake-token'})
-        app.blueprints['spotify'].storage = storage
+        self.storage = MemoryStorage({'access_token': 'fake-token', 'expires_in': 1})
+        app.blueprints['spotify'].storage = self.storage
         self.test_client = app.test_client()
 
     def test_homepage(self):
         response = self.test_client.get('/', follow_redirects=False)
         self.assertEqual(200, response.status_code)
         self.assertIn(b'<h1>Sentiment player for your favorite music</h1>', response.data)
+
+    def test_token_expired(self):
+        self.storage.token['expires_in'] = -1
+
+        response = self.test_client.get('/', follow_redirects=False)
+        self.assertEqual(302, response.status_code)
+        self.assertIn(b'<a href="/login/spotify">', response.data)
 
     def test_button_active_when_not_analysed(self):
         response = self.test_client.get('/', follow_redirects=False)
