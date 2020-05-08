@@ -9,7 +9,7 @@ from spotify.playlist import PlaylistManager
 
 class SpotifyAuthenticationService(object):
     def with_token(self, token):
-        sp = spotipy.Spotify(auth=token)
+        sp = spotipy.Spotify(auth=token['access_token'])
 
         return SpotifyMoodClassificationService(sp)
 

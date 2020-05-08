@@ -22,7 +22,7 @@ class HomeView(FlaskView):
         if (not spotify.authorized) or (spotify.token['expires_in'] < 0):
             self.log.debug('redirecting for authentication...')
             return redirect(url_for('spotify.login'))
-        spotify_service = HomeView.service.with_token(spotify.token['access_token'])
+        spotify_service = HomeView.service.with_token(spotify.token)
         return render_template('homepage.html', username=spotify_service.username(),
                                is_analysed=spotify_service.is_analysed())
 
@@ -32,7 +32,7 @@ class AnalyseView(FlaskView):
     service = SpotifyAuthenticationService()
 
     def post(self):
-        AnalyseView.service.with_token(spotify.token['access_token']).analyse()
+        AnalyseView.service.with_token(spotify.token).analyse()
         return redirect(url_for('HomeView:index'))
 
 
