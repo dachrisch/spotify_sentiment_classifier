@@ -7,7 +7,7 @@ from flask_restx import Resource
 from werkzeug.utils import redirect
 
 from api.restplus import api
-from spotify.service import SpotifyAuthentificationService
+from spotify.service import SpotifyAuthenticationService
 
 ns = api.namespace('sentiment', description='Sentiment Operations for Spotify')
 
@@ -15,7 +15,7 @@ ns = api.namespace('sentiment', description='Sentiment Operations for Spotify')
 @ns.route('/analyse')
 class Analyse(Resource):
     log = logging.getLogger(__name__)
-    service = SpotifyAuthentificationService()
+    service = SpotifyAuthenticationService()
 
     def post(self):
         if not spotify.authorized:

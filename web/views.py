@@ -8,12 +8,12 @@ from werkzeug.utils import redirect
 
 from classify.sentiment import Sentiment
 from spotify.player import Player
-from spotify.service import SpotifyAuthentificationService
+from spotify.service import SpotifyAuthenticationService
 
 
 class HomeView(FlaskView):
     route_base = '/'
-    service = SpotifyAuthentificationService()
+    service = SpotifyAuthenticationService()
 
     def __init__(self):
         self.log = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ class HomeView(FlaskView):
 
 class AnalyseView(FlaskView):
     route = '/analyse'
-    service = SpotifyAuthentificationService()
+    service = SpotifyAuthenticationService()
 
     def post(self):
         AnalyseView.service.with_token(spotify.token['access_token']).analyse()

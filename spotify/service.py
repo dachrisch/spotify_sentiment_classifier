@@ -7,7 +7,7 @@ from classify.sentiment import Sentiment
 from spotify.playlist import PlaylistManager
 
 
-class SpotifyAuthentificationService(object):
+class SpotifyAuthenticationService(object):
     def with_token(self, token):
         sp = spotipy.Spotify(auth=token)
 

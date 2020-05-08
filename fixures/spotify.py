@@ -4,7 +4,7 @@ from importlib import resources
 
 import spotipy
 
-from spotify.service import SpotifyAuthentificationService, SpotifyMoodClassificationService
+from spotify.service import SpotifyAuthenticationService, SpotifyMoodClassificationService
 
 
 class SpotifyTestConnector(spotipy.Spotify):
@@ -52,7 +52,7 @@ class SpotifyTestConnector(spotipy.Spotify):
             return json.load(user_tracks_file)
 
 
-class SpotifyAuthentificationTestService(SpotifyAuthentificationService):
+class SpotifyAuthenticationTestService(SpotifyAuthenticationService):
     def __init__(self):
         self.connector = SpotifyTestConnector()
 

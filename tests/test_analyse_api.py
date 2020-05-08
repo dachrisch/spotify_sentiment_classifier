@@ -4,13 +4,13 @@ from flask_dance.consumer.storage import MemoryStorage
 
 from api.endpoints.sentiment import Analyse
 from app import create_app
-from fixures.spotify import SpotifyAuthentificationTestService
+from fixures.spotify import SpotifyAuthenticationTestService
 
 
 class TestSentimentAnalyseApi(unittest.TestCase):
 
     def setUp(self):
-        Analyse.service = SpotifyAuthentificationTestService()
+        Analyse.service = SpotifyAuthenticationTestService()
         app = create_app()
         storage = MemoryStorage({'access_token': 'fake-token'})
         app.blueprints['spotify'].storage = storage
