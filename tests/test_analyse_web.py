@@ -13,6 +13,7 @@ class WasAnalysedCatcher(object):
     def __init__(self):
         self.was_analysed = False
 
+    # noinspection PyUnusedLocal
     def with_token(self, token):
         return self
 

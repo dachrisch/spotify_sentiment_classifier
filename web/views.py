@@ -17,17 +17,25 @@ class HomeView(FlaskView):
 
     def __init__(self):
         self.log = logging.getLogger(__name__)
+        self.spotify_service = None
+
+    def before_request(self, name):
+        self.spotify_service = self.service.with_token(spotify.token)
 
     def index(self):
-        if (not spotify.authorized) or (spotify.token['expires_in'] < 0):
+        if not self._valid_login():
             self.log.debug('redirecting for authentication...')
             return redirect(url_for('spotify.login'))
-        spotify_service = HomeView.service.with_token(spotify.token)
-        username = spotify_service.username()
-        is_analysed = spotify_service.is_analysed()
-        self.log.debug('library for user [{}] is {}'.format(username, is_analysed and 'analysed' or 'not analysed'))
-        return render_template('homepage.html', username=username,
-                               is_analysed=is_analysed)
+
+        self.log.debug(
+            'library is {}'.format(self._is_analysed() and 'analysed' or 'not analysed'))
+        return render_template('homepage.html', is_analysed=(self._is_analysed()))
+
+    def _is_analysed(self):
+        return self._valid_login() and self.spotify_service.is_analysed()
+
+    def _valid_login(self):
+        return spotify.authorized and (spotify.token['expires_in'] > 0)
 
 
 class AnalyseView(FlaskView):

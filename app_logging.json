@@ -30,7 +30,7 @@
         "handlers": [
           "debug-console"
         ],
-        "level": "INFO",
+        "level": "DEBUG",
         "propagate": 0
       },
       "spotify": {
