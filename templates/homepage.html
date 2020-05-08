@@ -33,7 +33,8 @@
                 <img alt="" src="static/images/pic01.jpg"/>
                 <div class="inner">
                     <form action="{{ url_for('AnalyseView:post') }}" class="no-padding" method="post">
-                        <button class="btn btn-primary btn-sm" type="submit">Analyse your music library
+                        <button %} %}disabled="disabled" class="btn btn-primary btn-sm" endif if
+                                is_analysedtype="submit" {% {%>Analyse your music library
                         </button>
                     </form>
                 </div>

@@ -22,7 +22,7 @@ class HomeView(FlaskView):
         except spotipy.SpotifyException as e:
             if 'The access token expired' in e.msg:
                 return redirect(url_for('spotify.login'))
-        return render_template('homepage.html', username=username)
+        return render_template('homepage.html', username=username, is_analysed=True)
 
 
 class AnalyseView(FlaskView):
