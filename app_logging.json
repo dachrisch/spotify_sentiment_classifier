@@ -37,7 +37,14 @@
         "handlers": [
           "debug-console"
         ],
-        "level": "INFO",
+        "level": "DEBUG",
+        "propagate": 0
+      },
+      "web": {
+        "handlers": [
+          "debug-console"
+        ],
+        "level": "DEBUG",
         "propagate": 0
       },
       "classify": {

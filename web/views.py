@@ -23,8 +23,11 @@ class HomeView(FlaskView):
             self.log.debug('redirecting for authentication...')
             return redirect(url_for('spotify.login'))
         spotify_service = HomeView.service.with_token(spotify.token)
-        return render_template('homepage.html', username=spotify_service.username(),
-                               is_analysed=spotify_service.is_analysed())
+        username = spotify_service.username()
+        is_analysed = spotify_service.is_analysed()
+        self.log.debug('library for user [{}] is {}'.format(username, is_analysed and 'analysed' or 'not analysed'))
+        return render_template('homepage.html', username=username,
+                               is_analysed=is_analysed)
 
 
 class AnalyseView(FlaskView):

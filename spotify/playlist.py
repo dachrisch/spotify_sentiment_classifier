@@ -14,13 +14,12 @@ class PlaylistManager(object):
 
     def tracks_in_playlist(self, sentiment: Sentiment):
         playlist_for_sentiment = self.playlist_for_sentiment(sentiment)
+        tracks = ()
         if playlist_for_sentiment:
             tracks = self.spotify_connector.playlist_tracks(playlist_for_sentiment['id'],
                                                             fields='items(track(name,id))')['items']
-            self.log.debug('found {} tracks in playlist {}'.format(len(tracks), sentiment))
-            return tracks
-        else:
-            return ()
+        self.log.debug('found [{}] tracks in playlist [{}]'.format(len(tracks), sentiment))
+        return tracks
 
     def add_tracks_to_playlist(self, track_ids, sentiment: Sentiment):
         playlist_for_sentiment = self.playlist_for_sentiment(sentiment)
@@ -51,12 +50,15 @@ class PlaylistManager(object):
     def playlist_for_sentiment(self, sentiment: Sentiment):
         playlist = None
         playlists = self.spotify_connector.current_user_playlists()['items']
+        self.log.debug('current user has [{}] playlists...'.format(len(playlists)))
         if playlists:
             playlists_for_sentiment = list(
                 filter(lambda x: x['name'] == PlaylistManager.to_playlist(sentiment), playlists))
+            self.log.debug('found [{}] playlists for [{}]'.format(len(playlists_for_sentiment), sentiment))
             if playlists_for_sentiment and len(playlists_for_sentiment) == 1:
                 playlist = playlists_for_sentiment[0]
 
+        self.log.debug('sentiment playlist for [{}]: {}'.format(sentiment, playlist))
         return playlist
 
     def get_playlist_uri(self, sentiment):
