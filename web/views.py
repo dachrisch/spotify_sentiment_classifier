@@ -1,3 +1,5 @@
+import logging
+
 import spotipy
 from flask import render_template, request, url_for
 from flask_classful import FlaskView
@@ -13,8 +15,12 @@ class HomeView(FlaskView):
     route_base = '/'
     service = SpotifyAuthentificationService()
 
+    def __init__(self):
+        self.log = logging.getLogger(__name__)
+
     def index(self):
         if (not spotify.authorized) or (spotify.token['expires_in'] < 0):
+            self.log.debug('redirecting for authentication...')
             return redirect(url_for('spotify.login'))
         spotify_service = HomeView.service.with_token(spotify.token['access_token'])
         return render_template('homepage.html', username=spotify_service.username(),

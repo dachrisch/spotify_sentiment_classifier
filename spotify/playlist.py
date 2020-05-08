@@ -6,17 +6,19 @@ from classify.sentiment import Sentiment
 
 
 class PlaylistManager(object):
-    log = logging.getLogger(__name__)
 
     def __init__(self, spotify_connector: spotipy.Spotify):
         self.spotify_connector = spotify_connector
         self.user_id = self.spotify_connector.current_user()['id']
+        self.log = logging.getLogger(__name__)
 
     def tracks_in_playlist(self, sentiment: Sentiment):
         playlist_for_sentiment = self.playlist_for_sentiment(sentiment)
         if playlist_for_sentiment:
-            return self.spotify_connector.playlist_tracks(playlist_for_sentiment['id'],
-                                                          fields='items(track(name,id))')['items']
+            tracks = self.spotify_connector.playlist_tracks(playlist_for_sentiment['id'],
+                                                            fields='items(track(name,id))')['items']
+            self.log.debug('found {} tracks in playlist {}'.format(len(tracks), sentiment))
+            return tracks
         else:
             return ()
 
