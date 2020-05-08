@@ -25,7 +25,7 @@ def create_app():
 
 def app_spotify_login(flask_app):
     spotify_blueprint = make_spotify_blueprint(os.getenv("SPOTIPY_CLIENT_ID"), os.getenv("SPOTIPY_CLIENT_SECRET"),
-                                               'user-library-read playlist-modify-private '
+                                               'user-library-read playlist-modify-private playlist-read-private '
                                                'user-modify-playback-state user-read-playback-state',
                                                os.getenv("SPOTIPY_REDIRECT_URI"))
     flask_app.register_blueprint(spotify_blueprint, url_prefix='/login')
