@@ -26,8 +26,9 @@ class TestSentimentAnalyseApi(unittest.TestCase):
     def test_button_active_when_not_analysed(self):
         response = self.test_client.get('/', follow_redirects=False)
         self.assertEqual(200, response.status_code)
-        soup = BeautifulSoup(response.data)
+        soup = BeautifulSoup(response.data, features='html.parser')
         button = soup.find(id='btn_analyse')
+        self.assertIsNotNone(button)
         self.assertIn('Analyse your music library', button.next)
 
     def test_button_deactivated_when_analysed(self):
@@ -37,9 +38,11 @@ class TestSentimentAnalyseApi(unittest.TestCase):
 
         response = self.test_client.get('/', follow_redirects=False)
         self.assertEqual(200, response.status_code)
-        soup = BeautifulSoup(response.data)
-        button = soup.find(id='btn_analyse')
-        self.assertIn('Analyse your music library', button.next)
+        self.soup = BeautifulSoup(response.data, features='html.parser')
+        soup = self.soup
+        button = soup.find(id='btn_analysed')
+        self.assertIsNotNone(button)
+        self.assertIn('Music library analysed', button.next)
 
 
 if __name__ == '__main__':

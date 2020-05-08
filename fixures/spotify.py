@@ -25,7 +25,7 @@ class SpotifyTestConnector(spotipy.Spotify):
     def user_playlist_create(self, user, name, public=True, description=""):
         id = random.randint(0, 100000)
         self.playlists['items'].append({'name': name, 'id': id})
-        return {'id':id}
+        return {'id': id}
 
     def audio_features(self, tracks=None):
         with resources.open_text('fixures', 'user_tracks_features.json5') as tracks_features:
@@ -53,5 +53,8 @@ class SpotifyTestConnector(spotipy.Spotify):
 
 
 class SpotifyAuthentificationTestService(SpotifyAuthentificationService):
+    def __init__(self):
+        self.connector = SpotifyTestConnector()
+
     def with_token(self, token):
-        return SpotifyMoodClassificationService(SpotifyTestConnector())
+        return SpotifyMoodClassificationService(self.connector)
