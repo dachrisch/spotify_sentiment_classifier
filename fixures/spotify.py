@@ -4,6 +4,8 @@ from importlib import resources
 
 import spotipy
 
+from spotify.service import SpotifyAuthentificationService, SpotifyMoodClassificationService
+
 
 class SpotifyTestConnector(spotipy.Spotify):
     def __init__(self):
@@ -48,3 +50,8 @@ class SpotifyTestConnector(spotipy.Spotify):
     def current_user_saved_tracks(self, limit=20, offset=0):
         with resources.open_text('fixures', 'current_user_tracks.json5') as user_tracks_file:
             return json.load(user_tracks_file)
+
+
+class SpotifyAuthentificationTestService(SpotifyAuthentificationService):
+    def with_token(self, token):
+        return SpotifyMoodClassificationService(SpotifyTestConnector())
