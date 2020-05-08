@@ -6,13 +6,29 @@ from flask_dance.consumer.storage import MemoryStorage
 from app import create_app
 from classify.sentiment import Sentiment
 from fixures.spotify import SpotifyAuthenticationTestService
-from web.views import HomeView
+from web.views import HomeView, AnalyseView
 
 
-class TestSentimentAnalyseApi(unittest.TestCase):
+class WasAnalysedCatcher(object):
+    def __init__(self):
+        self.was_analysed = False
+
+    def with_token(self, token):
+        return self
+
+    def analyse(self):
+        self.was_analysed = True
+        return True
+
+    def analyse_was_called(self):
+        return self.was_analysed
+
+
+class TestSentimentAnalyseWeb(unittest.TestCase):
 
     def setUp(self):
         HomeView.service = SpotifyAuthenticationTestService()
+        AnalyseView.service = SpotifyAuthenticationTestService()
         app = create_app()
         self.storage = MemoryStorage({'access_token': 'fake-token', 'expires_in': 1})
         app.blueprints['spotify'].storage = self.storage
@@ -50,6 +66,13 @@ class TestSentimentAnalyseApi(unittest.TestCase):
         button = soup.find(id='btn_analysed')
         self.assertIsNotNone(button)
         self.assertIn('Music library analysed', button.next)
+
+    def test_press_analyse_music_button(self):
+        AnalyseView.service = WasAnalysedCatcher()
+        response = self.test_client.post('/analyse/', follow_redirects=False)
+        self.assertTrue(AnalyseView.service.analyse_was_called())
+        self.assertEqual(302, response.status_code)
+        self.assertIn(b'<a href="/">', response.data)
 
 
 if __name__ == '__main__':
