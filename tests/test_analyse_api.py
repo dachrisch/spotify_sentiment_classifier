@@ -25,7 +25,7 @@ class TestSentimentAnalyseApi(unittest.TestCase):
     def test_homepage(self):
         response = self.test_client.get('/', follow_redirects=False)
         self.assertEqual(200, response.status_code)
-        self.assertIn(b'Analyse your music library', response.data)
+        self.assertIn(b'<h1>Sentiment player for your favorite music</h1>', response.data)
 
     def test_analyse(self):
         response = self.test_client.post('/api/sentiment/analyse', follow_redirects=True)
