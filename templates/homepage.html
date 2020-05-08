@@ -1,7 +1,7 @@
 {% extends "bootstrap/base.html" %}
 {% block title %}Spotify Sentiment Classifier{% endblock %}
 {% block metas %}
-<meta charset="utf-8"/>
+<meta charset="utf-8" xmlns="http://www.w3.org/1999/html"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 {% endblock metas %}
 {% block styles %}
@@ -43,10 +43,12 @@
                     <button class="btn btn-primary btn-sm" disabled="disabled" id="btn_analysed">
                         Music library analysed
                     </button>
+
                     <form action="{{ url_for('MoodPlayerView:post') }}" class="no-padding" method="post">
-                        <button class="btn btn-primary btn-sm" id="depression_button" type="submit" value="DEPRESSION">
-                            Play DEPRESSION song
-                        </button>
+                        {{ form.csrf_token }}
+                        {% for button in form.sentiment_buttons() %}
+                        {{ button }}
+                        {% endfor %}
                     </form>
                     <iframe allow="encrypted-media" allowtransparency="true" frameborder="0"
                             height="80" src="https://open.spotify.com/embed/playlist/7iruUrBrCrzVoMMy149yZu"

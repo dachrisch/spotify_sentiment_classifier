@@ -1,13 +1,13 @@
 import logging
 
-import spotipy
 from flask import render_template, request, url_for
 from flask_classful import FlaskView
 from flask_dance.contrib.spotify import spotify
+from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
+from wtforms import SubmitField
 
 from classify.sentiment import Sentiment
-from spotify.player import Player
 from spotify.service import SpotifyAuthenticationService
 
 
@@ -37,7 +37,7 @@ class HomeView(FlaskView, WithSpotifyServiceMixin):
             'library is {}'.format(self._is_analysed() and 'analysed' or 'not analysed'))
         self.log.debug(
             'user is {}'.format(self._valid_login() and 'logged in' or 'not logged in'))
-        return render_template('homepage.html', is_analysed=(self._is_analysed()))
+        return render_template('homepage.html', is_analysed=(self._is_analysed()), form=SentimentForm(request.form))
 
     def _is_analysed(self):
         return self.spotify_service and self.spotify_service.is_analysed()
@@ -62,7 +62,23 @@ class MoodPlayerView(FlaskView):
     route_base = '/player'
 
     def post(self):
-        pressed_button = request.args.get('depression_button')
-        sentiment = Sentiment.DEPRESSION
-        Player(spotipy.Spotify(spotify.token['access_token'])).queue_sentiment_playlist(sentiment)
+        form = SentimentForm()
+        # Player(spotipy.Spotify(spotify.token['access_token'])).queue_sentiment_playlist(sentiment)
         return redirect(url_for('HomeView:index'))
+
+
+def with_sentiment_buttons(cls):
+    for sentiment in Sentiment:
+        setattr(cls, sentiment.name, SubmitField(sentiment.name))
+    return cls
+
+
+@with_sentiment_buttons
+class SentimentForm(FlaskForm):
+
+    def __init__(self, form=None):
+        super(SentimentForm, self).__init__(form)
+
+    def sentiment_buttons(self):
+        for sentiment in Sentiment:
+            yield getattr(self, sentiment.name)
