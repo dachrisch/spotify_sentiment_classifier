@@ -43,13 +43,6 @@
                     <button class="btn btn-primary btn-sm" disabled="disabled" id="btn_analysed">
                         Music library analysed
                     </button>
-                    {% else %}
-                    <form action="{{ url_for('AnalyseView:post') }}" class="no-padding" method="post">
-                        <button class="btn btn-primary btn-sm" id="btn_analyse" type="submit">
-                            Analyse your music library
-                        </button>
-                    </form>
-                    {% endif %}
                     <form action="{{ url_for('MoodPlayerView:post') }}" class="no-padding" method="post">
                         <button class="btn btn-primary btn-sm" id="depression_button" type="submit" value="DEPRESSION">
                             Play DEPRESSION song
@@ -58,6 +51,13 @@
                     <iframe allow="encrypted-media" allowtransparency="true" frameborder="0"
                             height="80" src="https://open.spotify.com/embed/playlist/7iruUrBrCrzVoMMy149yZu"
                             width="300"></iframe>
+                    {% else %}
+                    <form action="{{ url_for('AnalyseView:post') }}" class="no-padding" method="post">
+                        <button class="btn btn-primary btn-sm" id="btn_analyse" type="submit">
+                            Analyse your music library
+                        </button>
+                    </form>
+                    {% endif %}
                 </div>
             </div>
 

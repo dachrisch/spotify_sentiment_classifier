@@ -24,8 +24,8 @@ class SpotifyTestConnector(spotipy.Spotify):
 
     def user_playlist_create(self, user, name, public=True, description=""):
         playlist_id = random.randint(0, 100000)
-        self.playlists['items'].append({'name': name, 'playlist_id': playlist_id})
-        return {'playlist_id': playlist_id}
+        self.playlists['items'].append({'name': name, 'id': playlist_id})
+        return {'id': playlist_id}
 
     def audio_features(self, tracks=None):
         with resources.open_text('fixures', 'user_tracks_features.json5') as tracks_features:

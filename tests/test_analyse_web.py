@@ -43,7 +43,7 @@ class TestSentimentAnalyseWeb(unittest.TestCase):
     def test_token_expired(self):
         self.storage.token['expires_in'] = -1
 
-        response = self.test_client.get('/', follow_redirects=False)
+        response = self.test_client.post('/analyse/', follow_redirects=False)
         self.assertEqual(302, response.status_code)
         self.assertIn(b'<a href="/login/spotify">', response.data)
 
