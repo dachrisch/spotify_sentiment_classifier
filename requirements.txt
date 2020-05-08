@@ -5,4 +5,5 @@ flask_dance
 flask_bootstrap
 flask_classful
 flask_wtf
+werkzeug
 pyopenssl
