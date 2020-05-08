@@ -34,11 +34,11 @@
                 <div class="inner">
                     <form action="{{ url_for('AnalyseView:post') }}" class="no-padding" method="post">
                         {% if is_analysed %}
-                        <button class="btn btn-primary btn-sm" disabled="disabled" type="submit">
+                        <button class="btn btn-primary btn-sm" disabled="disabled" id="btn_analysed" type="submit">
                             Music library analysed
                         </button>
                         {% else %}
-                        <button class="btn btn-primary btn-sm" type="submit">
+                        <button class="btn btn-primary btn-sm" id="btn_analyse" type="submit">
                             Analyse your music library
                         </button>
                         {% endif %}
