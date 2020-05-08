@@ -16,8 +16,9 @@ class HomeView(FlaskView):
     def index(self):
         if not spotify.authorized:
             return redirect(url_for('spotify.login'))
-        username = HomeView.service.with_token(spotify.token['access_token']).username()
-        return render_template('homepage.html', username=username, is_analysed=True)
+        spotify_service = HomeView.service.with_token(spotify.token['access_token'])
+        return render_template('homepage.html', username=spotify_service.username(),
+                               is_analysed=spotify_service.is_analysed())
 
 
 class AnalyseView(FlaskView):
