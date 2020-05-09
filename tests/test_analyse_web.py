@@ -83,7 +83,7 @@ class TestSentimentAnalyseWeb(unittest.TestCase):
         self.assertEqual(302, response.status_code)
         self.assertIn(b'<a href="/?sentiment_name=ANGER">', response.data)
 
-    def test_playlist_on_homepage(self):
+    def test_playlist_on_homepage_is_anger(self):
         self._setup_account_as_analysed()
         response = self.test_client.get('/?sentiment_name=ANGER', follow_redirects=False)
 
@@ -92,6 +92,15 @@ class TestSentimentAnalyseWeb(unittest.TestCase):
         spotify_player = soup.find(id='spotify_player')
         expected_id = HomeView.service.with_token(None).playlist_manager.playlist_for_sentiment(Sentiment.ANGER)['id']
         self.assertEqual('https://open.spotify.com/embed/playlist/{}'.format(expected_id), spotify_player.attrs['src'])
+
+    def test_no_player_when_no_playlist_on_homepage(self):
+        self._setup_account_as_analysed()
+        response = self.test_client.get('/', follow_redirects=False)
+        self.assertEqual(200, response.status_code)
+        soup = BeautifulSoup(response.data, features='html.parser')
+        spotify_player = soup.find(id='spotify_player')
+
+        self.assertIsNone(spotify_player)
 
 
 if __name__ == '__main__':
