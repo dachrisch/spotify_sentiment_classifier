@@ -56,17 +56,19 @@ class TestSentimentAnalyseWeb(unittest.TestCase):
         self.assertIn('Analyse your music library', button.next)
 
     def test_button_deactivated_when_analysed(self):
-        for sentiment in Sentiment:
-            HomeView.service.with_token(None).playlist_manager.add_tracks_to_playlist(('2p9RbgJwcuxasdMrQBdDDA3p',),
-                                                                                      sentiment)
+        self._setup_account_as_analysed()
 
         response = self.test_client.get('/', follow_redirects=False)
         self.assertEqual(200, response.status_code)
-        self.soup = BeautifulSoup(response.data, features='html.parser')
-        soup = self.soup
+        soup = BeautifulSoup(response.data, features='html.parser')
         button = soup.find(id='btn_analysed')
         self.assertIsNotNone(button)
         self.assertIn('Music library analysed', button.next)
+
+    def _setup_account_as_analysed(self):
+        for sentiment in Sentiment:
+            HomeView.service.with_token(None).playlist_manager.add_tracks_to_playlist(('2p9RbgJwcuxasdMrQBdDDA3p',),
+                                                                                      sentiment)
 
     def test_press_analyse_music_button(self):
         AnalyseView.service = WasAnalysedCatcher()
@@ -74,6 +76,22 @@ class TestSentimentAnalyseWeb(unittest.TestCase):
         self.assertTrue(AnalyseView.service.analyse_was_called())
         self.assertEqual(302, response.status_code)
         self.assertIn(b'<a href="/">', response.data)
+
+    def test_press_sentiment_button(self):
+        response = self.test_client.post('/player/', follow_redirects=False, data={'ANGER': True})
+
+        self.assertEqual(302, response.status_code)
+        self.assertIn(b'<a href="/?sentiment_name=ANGER">', response.data)
+
+    def test_playlist_on_homepage(self):
+        self._setup_account_as_analysed()
+        response = self.test_client.get('/?sentiment_name=ANGER', follow_redirects=False)
+
+        self.assertEqual(200, response.status_code)
+        soup = BeautifulSoup(response.data, features='html.parser')
+        spotify_player = soup.find(id='spotify_player')
+        expected_id = HomeView.service.with_token(None).playlist_manager.playlist_for_sentiment(Sentiment.ANGER)['id']
+        self.assertEqual('https://open.spotify.com/embed/playlist/{}'.format(expected_id), spotify_player.attrs['src'])
 
 
 if __name__ == '__main__':
