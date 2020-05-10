@@ -34,19 +34,8 @@ class HomeView(FlaskView, WithSpotifyServiceMixin):
 
     def index(self):
         self.log.debug(
-            'library is {}'.format(self._is_analysed() and 'analysed' or 'not analysed'))
-        self.log.debug(
             'user is {}'.format(self._valid_login() and 'logged in' or 'not logged in'))
-        sentiment_name = request.args.get('sentiment_name')
-        playlist_id = None
-        if sentiment_name:
-            sentiment = Sentiment.__getitem__(sentiment_name)
-            playlist_id = self.spotify_service.playlist_manager.playlist_for_sentiment(sentiment)['id']
-        return render_template('homepage.html', is_analysed=(self._is_analysed()), form=SentimentForm(),
-                               playlist_id=playlist_id)
-
-    def _is_analysed(self):
-        return self.spotify_service and self.spotify_service.is_analysed()
+        return render_template('homepage.html')
 
 
 class AnalyseView(FlaskView, WithSpotifyServiceMixin):
@@ -64,10 +53,22 @@ class AnalyseView(FlaskView, WithSpotifyServiceMixin):
         return redirect(url_for('HomeView:index'))
 
 
-class MoodPlayerView(FlaskView):
+class MoodPlayerView(FlaskView, WithSpotifyServiceMixin):
     route_base = '/player'
 
+    def __init__(self):
+        super().__init__()
+        self.log = logging.getLogger(__name__)
+
+    def index(self):
+        self.log.debug(
+            'library is {}'.format(self._is_analysed() and 'analysed' or 'not analysed'))
+        form = SentimentForm(request.form)
+        return render_template('player.html', form=form, is_analysed=(self._is_analysed()))
+
     def post(self):
+        self.log.debug(
+            'library is {}'.format(self._is_analysed() and 'analysed' or 'not analysed'))
         form = SentimentForm(request.form)
         sentiment_name = None
         if form.is_submitted():
@@ -75,8 +76,14 @@ class MoodPlayerView(FlaskView):
                 if value:
                     sentiment_name = name
                     break
-        # Player(spotipy.Spotify(spotify.token['access_token'])).queue_sentiment_playlist(sentiment_name)
-        return redirect(url_for('HomeView:index', sentiment_name=sentiment_name))
+        playlist_id = None
+        if sentiment_name:
+            sentiment = Sentiment.__getitem__(sentiment_name)
+            playlist_id = self.spotify_service.playlist_manager.playlist_for_sentiment(sentiment)['id']
+        return render_template('player.html', form=form, playlist_id=playlist_id, is_analysed=(self._is_analysed()))
+
+    def _is_analysed(self):
+        return self.spotify_service and self.spotify_service.is_analysed()
 
 
 def with_sentiment_buttons(cls):

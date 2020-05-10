@@ -6,7 +6,7 @@ from flask_dance.consumer.storage import MemoryStorage
 from app import create_app
 from classify.sentiment import Sentiment
 from fixures.spotify import SpotifyAuthenticationTestService
-from web.views import HomeView, AnalyseView
+from web.views import HomeView, AnalyseView, MoodPlayerView
 
 
 class WasAnalysedCatcher(object):
@@ -30,6 +30,7 @@ class TestSentimentAnalyseWeb(unittest.TestCase):
     def setUp(self):
         HomeView.service = SpotifyAuthenticationTestService()
         AnalyseView.service = SpotifyAuthenticationTestService()
+        MoodPlayerView.service = SpotifyAuthenticationTestService()
         app = create_app()
         self.storage = MemoryStorage({'access_token': 'fake-token', 'expires_in': 1})
         app.blueprints['spotify'].storage = self.storage
@@ -48,7 +49,7 @@ class TestSentimentAnalyseWeb(unittest.TestCase):
         self.assertIn(b'<a href="/login/spotify">', response.data)
 
     def test_button_active_when_not_analysed(self):
-        response = self.test_client.get('/', follow_redirects=False)
+        response = self.test_client.get('/player/', follow_redirects=False)
         self.assertEqual(200, response.status_code)
         soup = BeautifulSoup(response.data, features='html.parser')
         button = soup.find(id='btn_analyse')
@@ -58,7 +59,7 @@ class TestSentimentAnalyseWeb(unittest.TestCase):
     def test_button_deactivated_when_analysed(self):
         self._setup_account_as_analysed()
 
-        response = self.test_client.get('/', follow_redirects=False)
+        response = self.test_client.get('/player/', follow_redirects=False)
         self.assertEqual(200, response.status_code)
         soup = BeautifulSoup(response.data, features='html.parser')
         button = soup.find(id='btn_analysed')
@@ -69,6 +70,9 @@ class TestSentimentAnalyseWeb(unittest.TestCase):
         for sentiment in Sentiment:
             HomeView.service.with_token(None).playlist_manager.add_tracks_to_playlist(('2p9RbgJwcuxasdMrQBdDDA3p',),
                                                                                       sentiment)
+            MoodPlayerView.service.with_token(None).playlist_manager.add_tracks_to_playlist(
+                ('2p9RbgJwcuxasdMrQBdDDA3p',),
+                sentiment)
 
     def test_press_analyse_music_button(self):
         AnalyseView.service = WasAnalysedCatcher()
@@ -78,19 +82,20 @@ class TestSentimentAnalyseWeb(unittest.TestCase):
         self.assertIn(b'<a href="/">', response.data)
 
     def test_press_sentiment_button(self):
+        self._setup_account_as_analysed()
         response = self.test_client.post('/player/', follow_redirects=False, data={'ANGER': True})
 
-        self.assertEqual(302, response.status_code)
-        self.assertIn(b'<a href="/?sentiment_name=ANGER">', response.data)
+        self.assertEqual(200, response.status_code)
 
-    def test_playlist_on_homepage_is_anger(self):
+    def test_playlist_is_anger(self):
         self._setup_account_as_analysed()
-        response = self.test_client.get('/?sentiment_name=ANGER', follow_redirects=False)
+        response = self.test_client.post('/player/', follow_redirects=False, data={'ANGER': True})
 
         self.assertEqual(200, response.status_code)
         soup = BeautifulSoup(response.data, features='html.parser')
         spotify_player = soup.find(id='spotify_player')
-        expected_id = HomeView.service.with_token(None).playlist_manager.playlist_for_sentiment(Sentiment.ANGER)['id']
+        expected_id = MoodPlayerView.service.with_token(None).playlist_manager.playlist_for_sentiment(Sentiment.ANGER)[
+            'id']
         self.assertEqual('https://open.spotify.com/embed/playlist/{}'.format(expected_id), spotify_player.attrs['src'])
 
     def test_no_player_when_no_playlist_on_homepage(self):

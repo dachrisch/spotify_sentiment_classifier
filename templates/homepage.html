@@ -1,15 +1,5 @@
-{% extends "bootstrap/base.html" %}
-{% block title %}Spotify Sentiment Classifier{% endblock %}
-{% block metas %}
-<meta charset="utf-8" xmlns="http://www.w3.org/1999/html"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
-{% endblock metas %}
-{% block styles %}
-<link href="static/css/main.css" rel="stylesheet"/>
-{% endblock styles %}
-
-{% block content %}
-<!-- Banner -->
+{% extends "partials/base.html" %}
+{% block banner %}
 <section id="banner">
     <div class="inner">
         <header>
@@ -20,7 +10,9 @@
         <a class="more" href="#main">Get started</a>
     </div>
 </section>
+{% endblock banner %}
 
+{% block main %}
 <!-- Main -->
 <div id="main">
     <div class="inner">
@@ -31,37 +23,22 @@
             <div class="box">
                 <img alt="" src="static/images/pic01.jpg"/>
                 <div class="inner">
-                    <h2>Test the Service</h2>
+                    <form action="/" class="no-padding" method="get">
+                        <button class="btn btn-primary btn-sm" id="btn_test" type="submit">
+                            Test the Service
+                        </button>
+                    </form>
                 </div>
             </div>
 
             <div class="box">
-                <img alt="" src="static/images/pic02.jpg"/>
+                <img alt="" src="/static/images/pic02.jpg"/>
                 <div class="inner">
-                    <h2>Enjoy your own music</h2>
-                    {% if is_analysed %}
-                    <button class="btn btn-primary btn-sm" disabled="disabled" id="btn_analysed">
-                        Music library analysed
-                    </button>
-
-                    <form action="{{ url_for('MoodPlayerView:post') }}" class="no-padding" method="post">
-                        {{ form.csrf_token }}
-                        {% for button in form.sentiment_buttons() %}
-                        {{ button }}
-                        {% endfor %}
-                    </form>
-                    {% if playlist_id %}
-                    <iframe allow="encrypted-media" allowtransparency="true" frameborder="0" height="80"
-                            id="spotify_player" src="https://open.spotify.com/embed/playlist/{{ playlist_id }}"
-                            width="300"></iframe>
-                    {% endif %}
-                    {% else %}
-                    <form action="{{ url_for('AnalyseView:post') }}" class="no-padding" method="post">
-                        <button class="btn btn-primary btn-sm" id="btn_analyse" type="submit">
-                            Analyse your music library
+                    <form action="{{ url_for('MoodPlayerView:index') }}" class="no-padding" method="get">
+                        <button class="btn btn-primary btn-sm" id="btn_play" type="submit">
+                            Enjoy your own music
                         </button>
                     </form>
-                    {% endif %}
                 </div>
             </div>
 
@@ -70,31 +47,4 @@
     </div>
 </div>
 
-<!-- Footer -->
-<footer id="footer">
-    <div class="inner">
-        <h2>Etiam veroeros lorem</h2>
-        <p>Pellentesque eleifend malesuada efficitur. Curabitur volutpat dui mi, ac imperdiet dolor tincidunt nec. Ut
-            erat lectus, dictum sit amet lectus a, aliquet rutrum mauris. Etiam nec lectus hendrerit, consectetur risus
-            viverra, iaculis orci. Phasellus eu nibh ut mi luctus auctor. Donec sit amet dolor in diam feugiat
-            venenatis. </p>
-
-        <ul class="icons">
-            <li><a class="icon fa-twitter" href="#"><span class="label">Twitter</span></a></li>
-            <li><a class="icon fa-facebook" href="#"><span class="label">Facebook</span></a></li>
-            <li><a class="icon fa-instagram" href="#"><span class="label">Instagram</span></a></li>
-            <li><a class="icon fa-envelope" href="#"><span class="label">Email</span></a></li>
-        </ul>
-        <p class="copyright">&copy; Untitled. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a
-                href="https://unsplash.com/">Unsplash</a>. Videos: <a href="http://coverr.co/">Coverr</a>.</p>
-    </div>
-</footer>
-{% endblock content %}
-
-{% block scripts %}
-<script src="static/js/jquery.min.js"></script>
-<script src="static/js/jquery.scrolly.min.js"></script>
-<script src="static/js/skel.min.js"></script>
-<script src="static/js/util.js"></script>
-<script src="static/js/main.js"></script>
-{% endblock scripts %}
+{% endblock main %}
