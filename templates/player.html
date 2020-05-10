@@ -1,0 +1,56 @@
+{% extends "partials/base.html" %}
+{% block banner %}
+<section id="banner">
+    <div class="inner">
+        <header>
+            <h1>Sentiment player for your favorite music</h1>
+            <p>Music influences our mood in many situations, sometime consciously sometimes subtle. This app provides
+                support when going through times of a new beginning.</p>
+        </header>
+        <a class="more" href="#main">Get started</a>
+    </div>
+</section>
+{% endblock banner %}
+
+{% block main %}
+<!-- Main -->
+<div id="main">
+    <div class="inner">
+
+        <!-- Boxes -->
+        <div class="thumbnails">
+            <div class="box">
+                <img alt="" src="/static/images/pic02.jpg"/>
+                <div class="inner">
+                    <h2>Enjoy your own music</h2>
+                    {% if is_analysed %}
+                    <button class="btn btn-primary btn-sm" disabled="disabled" id="btn_analysed">
+                        Music library analysed
+                    </button>
+                    <form action="{{ url_for('MoodPlayerView:post') }}" class="no-padding" method="post">
+                        {{ form.csrf_token }}
+                        {% for button in form.sentiment_buttons() %}
+                        {{ button }}
+                        {% endfor %}
+                    </form>
+                    {% if playlist_id %}
+                    <iframe allow="encrypted-media" allowtransparency="true" frameborder="0" height="80"
+                            id="spotify_player" src="https://open.spotify.com/embed/playlist/{{ playlist_id }}"
+                            width="300"></iframe>
+                    {% endif %}
+                    {% else %}
+                    <form action="{{ url_for('AnalyseView:post') }}" class="no-padding" method="post">
+                        <button class="btn btn-primary btn-sm" id="btn_analyse" type="submit">
+                            Analyse your music library
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock main %}
