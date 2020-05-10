@@ -14,6 +14,10 @@ class SpotifyAuthenticationService(object):
         return SpotifyMoodClassificationService(sp)
 
 
+class UserHasNoTracksException(Exception):
+    pass
+
+
 class SpotifyMoodClassificationService(object):
     def __init__(self, spotify_connector: spotipy.Spotify):
         self.spotify_connector = spotify_connector
@@ -22,6 +26,8 @@ class SpotifyMoodClassificationService(object):
 
     def analyse(self):
         all_tracks = self._all_tracks()
+        if not all_tracks:
+            raise UserHasNoTracksException()
         self.log.info('analyzing [%s] tracks for sentiment...' % (len(self._only_ids(all_tracks))))
         all_tracks_features = self._all_tracks_audio_features(all_tracks)
 
@@ -51,4 +57,6 @@ class SpotifyMoodClassificationService(object):
         return tuple(map(lambda x: x['id'], tracks))
 
     def _all_tracks(self):
-        return tuple(map(lambda x: x['track'], self.spotify_connector.current_user_saved_tracks()['items']))
+        user_saved_tracks = self.spotify_connector.current_user_saved_tracks()
+        self.log.debug('user has the following saved tracks: [{}]'.format(user_saved_tracks))
+        return tuple(map(lambda x: x['track'], user_saved_tracks['items']))

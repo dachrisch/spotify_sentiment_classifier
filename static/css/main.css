@@ -1390,3 +1390,29 @@
 			}
 
 		}
+
+/* Messages */
+.alert {
+  padding: 0 0;
+  margin-bottom: 0;
+  border: 0 solid transparent;
+
+  width: 30%;
+  height: auto;
+
+  position: relative;
+  top:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  margin: auto;
+
+  text-align: center;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}

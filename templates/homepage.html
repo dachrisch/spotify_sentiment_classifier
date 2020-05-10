@@ -1,15 +1,29 @@
 {% extends "partials/base.html" %}
 {% block banner %}
+
 <section id="banner">
     <div class="inner">
         <header>
             <h1>Sentiment player for your favorite music</h1>
-            <p>Music influences our mood in many situations, sometime consciously sometimes subtle. This app provides
+            <p>Music influences our mood in many situations, sometime consciously sometimes subtle. This app
+                provides
                 support when going through times of a new beginning.</p>
         </header>
         <a class="more" href="#main">Get started</a>
     </div>
 </section>
+
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+{% if errors %}
+<div class="alert-message block-message error" id="error_messages">
+    {%- for msg in errors %}
+    <div class="alert alert-danger" role="alert">{{msg }}
+    </div>
+    {% endfor -%}
+</div>
+{% endif %}
+{% endwith %}
+
 {% endblock banner %}
 
 {% block main %}

@@ -1,6 +1,6 @@
 import logging
 
-from flask import render_template, request, url_for
+from flask import render_template, request, url_for, flash
 from flask_classful import FlaskView
 from flask_dance.contrib.spotify import spotify
 from flask_wtf import FlaskForm
@@ -8,7 +8,7 @@ from werkzeug.utils import redirect
 from wtforms import SubmitField
 
 from classify.sentiment import Sentiment
-from spotify.service import SpotifyAuthenticationService, SpotifyMoodClassificationService
+from spotify.service import SpotifyAuthenticationService, SpotifyMoodClassificationService, UserHasNoTracksException
 
 
 class WithSpotifyServiceMixin(object):
@@ -33,8 +33,11 @@ class HomeView(FlaskView, WithSpotifyServiceMixin):
         self.log = logging.getLogger(__name__)
 
     def index(self):
-        self.log.debug(
-            'user is {}'.format(self._valid_login() and 'logged in' or 'not logged in'))
+        self.log.debug('user is {}'.format(self._valid_login() and 'logged in' or 'not logged in'))
+
+        message = request.args.get('error')
+        if message:
+            flash(message, 'error')
         return render_template('homepage.html')
 
 
@@ -49,8 +52,12 @@ class AnalyseView(FlaskView, WithSpotifyServiceMixin):
         if not self._valid_login():
             self.log.debug('redirecting for authentication...')
             return redirect(url_for('spotify.login'))
-        AnalyseView.service.with_token(spotify.token).analyse()
-        return redirect(url_for('HomeView:index'))
+        try:
+            self.spotify_service.analyse()
+            return redirect(url_for('HomeView:index'))
+        except UserHasNoTracksException as e:
+            self.log.exception(e)
+            return redirect(url_for('HomeView:index', error="Analyse failed! You don't have any saved tracks."))
 
 
 class MoodPlayerView(FlaskView, WithSpotifyServiceMixin):
