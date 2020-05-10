@@ -55,4 +55,4 @@ if __name__ == '__main__':
     log = getLogger(__name__)
     log.debug('following endpoints are available')
     [log.debug(repr(p)) for p in app.url_map.iter_rules()]
-    app.run(debug=True, ssl_context='adhoc')
+    app.run(host='0.0.0.0', port=os.getenv('PORT', 5000), debug=True, ssl_context='adhoc')
