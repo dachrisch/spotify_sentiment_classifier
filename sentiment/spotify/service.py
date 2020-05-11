@@ -1,9 +1,9 @@
 import logging
 
-from classify.classify import FeatureClassifier
-from classify.sentiment import Sentiment
-from spotify.connector import SpotipyConnectionWrapper
-from spotify.playlist import PlaylistManager
+from sentiment.classify.classify import FeatureClassifier
+from sentiment.classify.sentiment import Sentiment
+from sentiment.spotify.connector import SpotipyConnectionWrapper
+from sentiment.spotify.playlist import PlaylistManager
 
 
 class SpotifyAuthenticationService(object):

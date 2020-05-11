@@ -1,7 +1,7 @@
 import logging
 
-from classify.sentiment import Sentiment
-from spotify.connector import SpotipyConnectionWrapper
+from sentiment.classify.sentiment import Sentiment
+from sentiment.spotify.connector import SpotipyConnectionWrapper
 
 
 class PlaylistManager(object):

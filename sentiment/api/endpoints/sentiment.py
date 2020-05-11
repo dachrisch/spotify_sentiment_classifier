@@ -6,8 +6,8 @@ from flask_dance.contrib.spotify import spotify
 from flask_restx import Resource
 from werkzeug.utils import redirect
 
-from api.restplus import api
-from spotify.service import SpotifyAuthenticationService
+from sentiment.api.restplus import api
+from sentiment.spotify.service import SpotifyAuthenticationService
 
 ns = api.namespace('sentiment', description='Sentiment Operations for Spotify')
 

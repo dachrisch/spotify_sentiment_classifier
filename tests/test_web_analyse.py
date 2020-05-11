@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import MagicMock
 
+from sentiment.web.views import AnalyseView
 from tests.web_testing_base import WithTestClientMixin, WasAnalysedCatcher
-from web.views import AnalyseView
 
 
 class TestAnalyseWeb(unittest.TestCase, WithTestClientMixin):

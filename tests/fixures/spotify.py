@@ -4,8 +4,8 @@ from importlib import resources
 
 import spotipy as spotipy
 
-from spotify.connector import SpotipyConnectionWrapper
-from spotify.service import SpotifyAuthenticationService, SpotifyMoodClassificationService
+from sentiment.spotify.connector import SpotipyConnectionWrapper
+from sentiment.spotify.service import SpotifyAuthenticationService, SpotifyMoodClassificationService
 
 
 class SpotipyTestFixure(spotipy.Spotify):

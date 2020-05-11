@@ -7,8 +7,9 @@ from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
 from wtforms import SubmitField
 
-from classify.sentiment import Sentiment
-from spotify.service import SpotifyAuthenticationService, SpotifyMoodClassificationService, UserHasNoTracksException
+from sentiment.classify.sentiment import Sentiment
+from sentiment.spotify.service import SpotifyAuthenticationService, SpotifyMoodClassificationService, \
+    UserHasNoTracksException
 
 
 class WithSpotifyServiceMixin(object):

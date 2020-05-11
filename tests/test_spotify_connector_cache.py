@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from spotify.connector import SpotipyConnectionWrapper
+from sentiment.spotify.connector import SpotipyConnectionWrapper
 
 
 class TestSpotifyConnectorCache(TestCase):

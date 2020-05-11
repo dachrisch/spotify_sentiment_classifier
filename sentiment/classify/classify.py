@@ -1,4 +1,4 @@
-from classify.sentiment import Sentiment
+from sentiment.classify.sentiment import Sentiment
 
 
 class FeatureClassifier(object):

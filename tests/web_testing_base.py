@@ -3,9 +3,9 @@ import os
 from flask_dance.consumer.storage import MemoryStorage
 
 from app import create_app
-from classify.sentiment import Sentiment
-from fixures.spotify import SpotifyAuthenticationTestService
-from web.views import HomeView, AnalyseView, MoodPlayerView
+from sentiment.classify.sentiment import Sentiment
+from sentiment.web.views import HomeView, AnalyseView, MoodPlayerView
+from tests.fixures.spotify import SpotifyAuthenticationTestService
 
 
 class WithTestClientMixin(object):

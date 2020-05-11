@@ -3,8 +3,8 @@ import unittest
 from importlib import resources
 from logging import config
 
-from classify.classify import FeatureClassifier
-from classify.sentiment import Sentiment
+from sentiment.classify.classify import FeatureClassifier
+from sentiment.classify.sentiment import Sentiment
 
 with resources.open_text('tests', 'tests_logging.json') as f:
     config.dictConfig(json.load(f)['logging'])

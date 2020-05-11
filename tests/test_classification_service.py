@@ -1,9 +1,9 @@
 import unittest
 
-from classify.sentiment import Sentiment
-from fixures.spotify import SpotipyTestFixure
-from spotify.playlist import PlaylistManager
-from spotify.service import SpotifyMoodClassificationService
+from sentiment.classify.sentiment import Sentiment
+from sentiment.spotify.playlist import PlaylistManager
+from sentiment.spotify.service import SpotifyMoodClassificationService
+from tests.fixures.spotify import SpotipyTestFixure
 
 
 class SpotifyMoodClassificationServiceTest(unittest.TestCase):

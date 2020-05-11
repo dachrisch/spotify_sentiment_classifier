@@ -8,12 +8,12 @@ from flask_dance.contrib.spotify import make_spotify_blueprint
 from flask_talisman import Talisman
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from api.restplus import api
-from web.views import HomeView, MoodPlayerView, AnalyseView
+from sentiment.api.restplus import api
+from sentiment.web.views import HomeView, MoodPlayerView, AnalyseView
 
 
 def create_app():
-    flask_app = Flask(__name__)
+    flask_app = Flask(__name__, template_folder='sentiment/templates', static_folder='sentiment/static')
 
     flask_app.wsgi_app = ProxyFix(flask_app.wsgi_app)
 
@@ -32,10 +32,10 @@ def create_app():
 
 def configure_app(flask_app):
     app_config = {
-        'development': 'config.DevelopmentConfig',
-        'testing': 'config.TestingConfig',
-        'production': 'config.ProductionConfig',
-        'default': 'config.DevelopmentConfig'
+        'development': 'sentiment.config.DevelopmentConfig',
+        'testing': 'sentiment.config.TestingConfig',
+        'production': 'sentiment.config.ProductionConfig',
+        'default': 'sentiment.config.DevelopmentConfig'
     }
     config_name = os.getenv('FLASK_CONFIGURATION', 'default')
     flask_app.config.from_object(app_config[config_name])
@@ -71,7 +71,7 @@ def app_api(flask_app):
     api_blueprint = Blueprint('api', __name__, url_prefix='/api')
     api.init_app(api_blueprint)
     # import this, so it gets initialized
-    from api.endpoints.sentiment import ns
+    from sentiment.api.endpoints.sentiment import ns
     assert ns.name == 'sentiment', ns.name
     flask_app.register_blueprint(api_blueprint)
 

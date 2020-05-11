@@ -2,9 +2,9 @@ from unittest import TestCase
 
 from bs4 import BeautifulSoup
 
-from classify.sentiment import Sentiment
+from sentiment.classify.sentiment import Sentiment
+from sentiment.web.views import MoodPlayerView
 from tests.web_testing_base import WithTestClientMixin
-from web.views import MoodPlayerView
 
 
 class TestWebPlayer(TestCase, WithTestClientMixin):
