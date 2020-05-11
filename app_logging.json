@@ -33,25 +33,11 @@
         "level": "DEBUG",
         "propagate": 0
       },
-      "spotify": {
+      "sentiment": {
         "handlers": [
           "debug-console"
         ],
         "level": "DEBUG",
-        "propagate": 0
-      },
-      "web": {
-        "handlers": [
-          "debug-console"
-        ],
-        "level": "DEBUG",
-        "propagate": 0
-      },
-      "classify": {
-        "handlers": [
-          "debug-console"
-        ],
-        "level": "INFO",
         "propagate": 0
       }
     }

@@ -4,7 +4,7 @@ from flask_dance.consumer.storage import MemoryStorage
 
 from app import create_app
 from sentiment.api.endpoints.sentiment import Analyse
-from tests.fixures.spotify import SpotifyAuthenticationTestService
+from tests.fixtures.spotify import SpotifyAuthenticationTestService
 
 
 class TestSentimentAnalyseApi(unittest.TestCase):

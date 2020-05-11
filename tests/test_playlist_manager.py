@@ -2,7 +2,7 @@ import unittest
 
 from sentiment.classify.sentiment import Sentiment
 from sentiment.spotify.playlist import PlaylistManager
-from tests.fixures.spotify import SpotipyTestFixure
+from tests.fixtures.spotify import SpotipyTestFixure
 
 
 class PlaylistManagerTest(unittest.TestCase):

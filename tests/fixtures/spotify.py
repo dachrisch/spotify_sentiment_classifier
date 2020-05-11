@@ -33,7 +33,7 @@ class SpotipyTestFixure(spotipy.Spotify):
         return {'id': playlist_id}
 
     def audio_features(self, tracks=None):
-        with resources.open_text('fixures', 'user_tracks_features.json5') as tracks_features:
+        with resources.open_text('tests.fixtures', 'user_tracks_features.json5') as tracks_features:
             return json.load(tracks_features)
 
     def playlist_tracks(self,
@@ -53,7 +53,7 @@ class SpotipyTestFixure(spotipy.Spotify):
                 {'track': {'id': track, 'name': playlist_id}})
 
     def current_user_saved_tracks(self, limit=20, offset=0):
-        with resources.open_text('fixures', 'current_user_tracks.json5') as user_tracks_file:
+        with resources.open_text('tests.fixtures', 'current_user_tracks.json5') as user_tracks_file:
             return json.load(user_tracks_file)
 
 
