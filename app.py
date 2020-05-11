@@ -89,4 +89,4 @@ if __name__ == '__main__':
     if app.config.get('DEBUG'):
         app.run(debug=True, ssl_context='adhoc')
     else:
-        app.run(host='0.0.0.0', port=os.getenv('PORT', 5000), debug=True, ssl_context='adhoc')
+        app.run(host='0.0.0.0', port=os.getenv('PORT', 5000), ssl_context='adhoc')
