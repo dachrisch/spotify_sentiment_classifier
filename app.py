@@ -19,12 +19,29 @@ def create_app():
 
     flask_app.secret_key = '12345'
 
+    configure_app(flask_app)
     add_views(flask_app)
     app_api(flask_app)
     app_spotify_login(flask_app)
+    add_security(flask_app)
 
     Bootstrap(flask_app)
 
+    return flask_app
+
+
+def configure_app(flask_app):
+    app_config = {
+        'development': 'config.DevelopmentConfig',
+        'testing': 'config.TestingConfig',
+        'production': 'config.ProductionConfig',
+        'default': 'config.DevelopmentConfig'
+    }
+    config_name = os.getenv('FLASK_CONFIGURATION', 'default')
+    flask_app.config.from_object(app_config[config_name])
+
+
+def add_security(flask_app):
     csp = {
         'default-src': "'self'",
         'img-src': '*',
@@ -33,7 +50,6 @@ def create_app():
         'script-src': "'self'"
     }
     Talisman(flask_app, content_security_policy=csp)
-    return flask_app
 
 
 def app_spotify_login(flask_app):
