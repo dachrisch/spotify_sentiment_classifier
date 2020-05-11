@@ -9,11 +9,6 @@
         </header>
         {% if is_loggedin %}
         <button class="button" disabled="disabled" id="logged_in_user">Logged in as {{ username }}</button>
-        {% else %}
-        <a class="button login" href="{{ url_for('LoginView:index', next=url_for('MoodPlayerView:index')) }}"
-           id="spotify_login">Login with Spotify</a>
-        {% endif %}
-
         {% if is_analysed %}
         <button class="btn btn-primary btn-sm" disabled="disabled" id="btn_analysed">
             Music library analysed
@@ -25,6 +20,11 @@
             </button>
         </form>
         {% endif %}
+        {% else %}
+        <a class="button login" href="{{ url_for('LoginView:index', next=url_for('MoodPlayerView:index')) }}"
+           id="spotify_login">Login with Spotify</a>
+        {% endif %}
+
     </div>
 </section>
 
@@ -47,19 +47,13 @@
 <!-- Main -->
 <main id="main">
     <div class="inner">
-        <div class="range">
-            <input max="7" min="1" steps="1" type="range" value="1">
+        <div class="wrapper">
+            <div class="app" id="app">
+                <section style="background:#900c3f">
+                    <range-slider :id="'first'" :range-data="sliderFirst" :theme="'dark'"></range-slider>
+                </section>
+            </div>
         </div>
-
-        <ul class="range-labels">
-            <li class="active selected">Today</li>
-            <li>2 days</li>
-            <li>3 days</li>
-            <li>4 days</li>
-            <li>5 days</li>
-            <li>6 days</li>
-            <li>7 days</li>
-        </ul>
 
         <!-- Boxes -->
         <div class="thumbnails">

@@ -3,9 +3,11 @@ import os
 from logging import config, getLogger
 
 from flask import Flask, Blueprint
+from flask_assets import Environment
 from flask_bootstrap import Bootstrap
 from flask_dance.contrib.spotify import make_spotify_blueprint
 from flask_talisman import Talisman
+from webassets import Bundle
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from sentiment.api.restplus import api
@@ -27,6 +29,19 @@ def create_app():
 
     Bootstrap(flask_app)
 
+    assets = Environment(flask_app)
+    style_bundle = Bundle('assets/scss/slider.scss',
+                          filters='pyscss',
+                          output='dist/css/style.min.css',
+                          extra={'rel': 'stylesheet/css'})
+    assets.register('main_styles', style_bundle)
+    js_bundle = Bundle('assets/js/slider.js',
+                       filters='jsmin',
+                       output='dist/js/main.min.js')
+    assets.register('main_js', js_bundle)
+    style_bundle.build()
+    js_bundle.build()
+
     return flask_app
 
 
@@ -45,7 +60,7 @@ def add_security(flask_app):
     csp = {
         'default-src': "'self'",
         'img-src': '*',
-        'style-src': ("'self'", 'https://fonts.googleapis.com/css'),
+        'style-src': ("'self'", 'https://fonts.googleapis.com/css', "'unsafe-inline'"),
         'font-src': ("'self'", 'fonts.gstatic.com'),
         'script-src': "'self'",
         'frame-src': 'https://open.spotify.com/'
