@@ -10,8 +10,20 @@
         {% if is_loggedin %}
         <button class="button" disabled="disabled" id="logged_in_user">Logged in as {{ username }}</button>
         {% else %}
-        <a class="button round" href="{{ url_for('LoginView:index', next=url_for('MoodPlayerView:index')) }}"
+        <a class="button login" href="{{ url_for('LoginView:index', next=url_for('MoodPlayerView:index')) }}"
            id="spotify_login">Login with Spotify</a>
+        {% endif %}
+
+        {% if is_analysed %}
+        <button class="btn btn-primary btn-sm" disabled="disabled" id="btn_analysed">
+            Music library analysed
+        </button>
+        {% else %}
+        <form action="{{ url_for('AnalyseView:post') }}" class="no-padding" method="post">
+            <button class="btn btn-primary btn-sm" id="btn_analyse" type="submit">
+                Analyse your music library
+            </button>
+        </form>
         {% endif %}
     </div>
 </section>
@@ -31,39 +43,43 @@
 
 
 {% block main %}
-{% if is_loggedin %}
+{% if is_analysed %}
 <!-- Main -->
 <main id="main">
     <div class="inner">
+        <div class="range">
+            <input max="7" min="1" steps="1" type="range" value="1">
+        </div>
+
+        <ul class="range-labels">
+            <li class="active selected">Today</li>
+            <li>2 days</li>
+            <li>3 days</li>
+            <li>4 days</li>
+            <li>5 days</li>
+            <li>6 days</li>
+            <li>7 days</li>
+        </ul>
 
         <!-- Boxes -->
         <div class="thumbnails">
             <div class="box">
-                <img alt="" src="/static/images/pic02.jpg"/>
+                <span class="image fit"><img alt="" src="/static/images/pic02.jpg"/></span>
                 <div class="inner">
                     <h2>Enjoy your own music</h2>
-                    {% if is_analysed %}
-                    <button class="btn btn-primary btn-sm" disabled="disabled" id="btn_analysed">
-                        Music library analysed
-                    </button>
                     <form action="{{ url_for('MoodPlayerView:post') }}" class="no-padding" method="post">
                         {{ form.csrf_token }}
                         {% for button in form.sentiment_buttons() %}
                         {{ button }}
                         {% endfor %}
                     </form>
+
                     {% if playlist_id %}
                     <iframe allow="encrypted-media" allowtransparency="true" frameborder="0" height="80"
                             id="spotify_player" src="https://open.spotify.com/embed/playlist/{{ playlist_id }}"
                             width="300"></iframe>
                     {% endif %}
-                    {% else %}
-                    <form action="{{ url_for('AnalyseView:post') }}" class="no-padding" method="post">
-                        <button class="btn btn-primary btn-sm" id="btn_analyse" type="submit">
-                            Analyse your music library
-                        </button>
-                    </form>
-                    {% endif %}
+
                 </div>
             </div>
 
