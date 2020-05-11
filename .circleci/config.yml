@@ -36,12 +36,6 @@ jobs:
             pip install -r requirements.txt
             pip install -r test_requirements.txt
 
-      - run:
-          name: install pytest
-          command: |
-            . venv/bin/activate
-            pip install pytest
-
       - save_cache:
           paths:
             - ./venv
@@ -56,7 +50,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            pytest --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
+            pytest --junitxml=test-reports/test-results.xml --cov=. --cov-report=xml --cov-report=html
 
       - store_test_results:
           path: test-reports
