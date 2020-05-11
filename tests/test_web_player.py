@@ -1,28 +1,16 @@
-import unittest
+from unittest import TestCase
 
 from bs4 import BeautifulSoup
 
 from classify.sentiment import Sentiment
-from tests.test_analyse_web import WithTestClientMixin
-from web.views import HomeView, MoodPlayerView
+from tests.web_testing_base import WithTestClientMixin
+from web.views import MoodPlayerView
 
 
-class TestHomeWeb(unittest.TestCase, WithTestClientMixin):
+class TestWebPlayer(TestCase, WithTestClientMixin):
 
     def setUp(self):
         self._setup_testclient()
-
-    def test_homepage(self):
-        response = self.test_client.get('/', follow_redirects=False)
-        self.assertEqual(200, response.status_code)
-        self.assertIn(b'<h1>Sentiment player for your favorite music</h1>', response.data)
-
-    def test_token_expired(self):
-        self.storage.token['expires_in'] = -1
-
-        response = self.test_client.post('/analyse/', follow_redirects=False)
-        self.assertEqual(302, response.status_code)
-        self.assertIn(b'<a href="/login/spotify">', response.data)
 
     def test_button_active_when_not_analysed(self):
         response = self.test_client.get('/player/', follow_redirects=False)
@@ -41,14 +29,6 @@ class TestHomeWeb(unittest.TestCase, WithTestClientMixin):
         button = soup.find(id='btn_analysed')
         self.assertIsNotNone(button)
         self.assertIn('Music library analysed', button.next)
-
-    def _setup_account_as_analysed(self):
-        for sentiment in Sentiment:
-            HomeView.service.with_token(None).playlist_manager.add_tracks_to_playlist(('2p9RbgJwcuxasdMrQBdDDA3p',),
-                                                                                      sentiment)
-            MoodPlayerView.service.with_token(None).playlist_manager.add_tracks_to_playlist(
-                ('2p9RbgJwcuxasdMrQBdDDA3p',),
-                sentiment)
 
     def test_press_sentiment_button(self):
         self._setup_account_as_analysed()
@@ -69,15 +49,15 @@ class TestHomeWeb(unittest.TestCase, WithTestClientMixin):
 
     def test_no_player_when_no_playlist_on_homepage(self):
         self._setup_account_as_analysed()
-        response = self.test_client.get('/', follow_redirects=False)
+        response = self.test_client.get('/player/', follow_redirects=False)
         self.assertEqual(200, response.status_code)
         soup = BeautifulSoup(response.data, features='html.parser')
         spotify_player = soup.find(id='spotify_player')
 
         self.assertIsNone(spotify_player)
 
-    def test_message_is_displayed(self):
-        response = self.test_client.get('/?error="Test"', follow_redirects=False)
+    def test_error_message(self):
+        response = self.test_client.get('/player/?error="Test"', follow_redirects=False)
         self.assertEqual(200, response.status_code)
         soup = BeautifulSoup(response.data, features='html.parser')
         error_messages = soup.find(id='error_messages')
