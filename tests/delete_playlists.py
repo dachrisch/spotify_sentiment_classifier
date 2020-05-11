@@ -4,8 +4,8 @@ from functools import partial
 
 import spotipy
 
-from classify.sentiment import Sentiment
-from spotify.playlist import PlaylistManager
+from sentiment.classify.sentiment import Sentiment
+from sentiment.spotify.playlist import PlaylistManager
 
 
 def all_items(limited_call):

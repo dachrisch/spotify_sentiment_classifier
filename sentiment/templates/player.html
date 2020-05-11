@@ -29,7 +29,9 @@
 
 {% endblock banner %}
 
+
 {% block main %}
+{% if is_loggedin %}
 <!-- Main -->
 <main id="main">
     <div class="inner">
@@ -70,4 +72,6 @@
     </div>
 </main>
 
+{% endif %}
 {% endblock main %}
+

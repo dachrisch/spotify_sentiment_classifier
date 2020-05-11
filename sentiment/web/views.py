@@ -92,7 +92,7 @@ class MoodPlayerView(FlaskView, WithSpotifyServiceMixin):
     def _username_if_loggedin(self):
         return self.spotify_service and self.spotify_service.username()
 
-    def _playlist_id_from_form(self, form):
+    def _playlist_id_from_form(self, form: FlaskForm):
         sentiment_name = None
         if form.is_submitted():
             for name, value in form.data.items():
