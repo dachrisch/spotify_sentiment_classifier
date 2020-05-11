@@ -1066,6 +1066,11 @@
 				background-color: #8f6bc9;
 			}
 
+		.button.round {
+		    border-radius : 500px;
+		    background-color: #1DB954;
+		}
+
 		@media screen and (max-width: 480px) {
 
 			input[type="submit"],

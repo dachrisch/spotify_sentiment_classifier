@@ -7,7 +7,7 @@
             <p>Music influences our mood in many situations, sometime consciously sometimes subtle. This app provides
                 support when going through times of a new beginning.</p>
         </header>
-        <a class="more" href="#main">Get started</a>
+        <a class="button round" href="{{ url_for('spotify.login') }}">Login with Spotify</a>
     </div>
 </section>
 
@@ -26,7 +26,7 @@
 
 {% block main %}
 <!-- Main -->
-<div id="main">
+<main id="main">
     <div class="inner">
 
         <!-- Boxes -->
@@ -63,6 +63,6 @@
         </div>
 
     </div>
-</div>
+</main>
 
 {% endblock main %}
