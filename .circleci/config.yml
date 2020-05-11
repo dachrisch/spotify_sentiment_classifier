@@ -62,4 +62,4 @@ jobs:
           destination: test-reports
 
       - codecov/upload:
-          flags: backend
+          flags: app
