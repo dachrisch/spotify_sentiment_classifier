@@ -17,37 +17,30 @@
 
 {% block main %}
 <!-- Main -->
-<div id="main">
+<main id="main">
     <div class="inner">
 
         <!-- Boxes -->
         <div class="thumbnails">
 
             <div class="box">
-                <img alt="" src="static/images/pic01.jpg"/>
+                <span class="image fit"><img alt="" src="static/images/pic01.jpg"/></span>
                 <div class="inner">
-                    <form action="/" class="no-padding" method="get">
-                        <button class="btn btn-primary btn-sm" id="btn_test" type="submit">
-                            Test the Service
-                        </button>
-                    </form>
+                    <a class="button style2 fit" href="/">Test the Service</a>
                 </div>
             </div>
 
             <div class="box">
-                <img alt="" src="/static/images/pic02.jpg"/>
+                <span class="image fit"><img alt="" src="/static/images/pic02.jpg"/></span>
                 <div class="inner">
-                    <form action="{{ url_for('MoodPlayerView:index') }}" class="no-padding" method="get">
-                        <button class="btn btn-primary btn-sm" id="btn_play" type="submit">
-                            Enjoy your own music
-                        </button>
-                    </form>
+                    <a class="button style3 fit" href="{{ url_for('MoodPlayerView:index') }}">Enjoy your own music</a>
                 </div>
             </div>
+
 
         </div>
 
     </div>
-</div>
+</main>
 
 {% endblock main %}
