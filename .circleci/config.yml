@@ -3,6 +3,8 @@
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
 version: 2
+orbs:
+  codecov: codecov/codecov@1.0.2
 jobs:
   build:
     docker:
@@ -53,9 +55,11 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            pytest --junit-xml=test-reports/results.xml
+            pytest --junit-xml=test-reports/results.xml --cov=src --cov-report=xml --cov-report=html test/unit
 
       - store_test_results:
           path: test-reports
           destination: test-reports
 
+      - codecov/upload:
+          flags: backend
