@@ -2,14 +2,19 @@ import json
 import random
 from importlib import resources
 
-import spotipy
+import spotipy as spotipy
 
+from spotify.connector import SpotipyConnectionWrapper
 from spotify.service import SpotifyAuthenticationService, SpotifyMoodClassificationService
 
 
-class SpotifyTestConnector(spotipy.Spotify):
+class SpotipyTestFixure(spotipy.Spotify):
+    @classmethod
+    def as_wrapper(cls):
+        return SpotipyConnectionWrapper(cls())
+
     def __init__(self):
-        super().__init__()
+        super().__init__(None)
         self._session = None
         self.playlists = {'items': []}
         self.tracks_in_playlists = {}
@@ -54,7 +59,7 @@ class SpotifyTestConnector(spotipy.Spotify):
 
 class SpotifyAuthenticationTestService(SpotifyAuthenticationService):
     def __init__(self):
-        self.connector = SpotifyTestConnector()
+        self.connector = SpotipyConnectionWrapper(SpotipyTestFixure())
 
     def with_token(self, token):
         return SpotifyMoodClassificationService(self.connector)

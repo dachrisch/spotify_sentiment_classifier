@@ -1,13 +1,12 @@
 import logging
 
-import spotipy
-
 from classify.sentiment import Sentiment
+from spotify.connector import SpotipyConnectionWrapper
 
 
 class PlaylistManager(object):
 
-    def __init__(self, spotify_connector: spotipy.Spotify):
+    def __init__(self, spotify_connector: SpotipyConnectionWrapper):
         self.spotify_connector = spotify_connector
         self.user_id = self.spotify_connector.current_user()['id']
         self.log = logging.getLogger(__name__)
@@ -61,5 +60,3 @@ class PlaylistManager(object):
         self.log.debug('sentiment playlist for [{}]: {}'.format(sentiment, playlist))
         return playlist
 
-    def get_playlist_uri(self, sentiment):
-        return 'spotify:track:2DB2zVP1LVu6jjyrvqD44z'

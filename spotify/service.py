@@ -1,17 +1,14 @@
 import logging
 
-import spotipy
-
 from classify.classify import FeatureClassifier
 from classify.sentiment import Sentiment
+from spotify.connector import SpotipyConnectionWrapper
 from spotify.playlist import PlaylistManager
 
 
 class SpotifyAuthenticationService(object):
     def with_token(self, token):
-        sp = spotipy.Spotify(auth=token['access_token'])
-
-        return SpotifyMoodClassificationService(sp)
+        return SpotifyMoodClassificationService(SpotipyConnectionWrapper.from_token(token['access_token']))
 
 
 class UserHasNoTracksException(Exception):
@@ -19,7 +16,7 @@ class UserHasNoTracksException(Exception):
 
 
 class SpotifyMoodClassificationService(object):
-    def __init__(self, spotify_connector: spotipy.Spotify):
+    def __init__(self, spotify_connector: SpotipyConnectionWrapper):
         self.spotify_connector = spotify_connector
         self.playlist_manager = PlaylistManager(self.spotify_connector)
         self.log = logging.getLogger(__name__)

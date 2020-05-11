@@ -1,14 +1,14 @@
 import unittest
 
 from classify.sentiment import Sentiment
-from fixures.spotify import SpotifyTestConnector
+from fixures.spotify import SpotipyTestFixure
 from spotify.playlist import PlaylistManager
 from spotify.service import SpotifyMoodClassificationService
 
 
 class SpotifyMoodClassificationServiceTest(unittest.TestCase):
     def test_classify_and_add(self):
-        test_connector = SpotifyTestConnector()
+        test_connector = SpotipyTestFixure.as_wrapper()
         SpotifyMoodClassificationService(test_connector).analyse()
 
         self.assertEqual('2p9RbgJwcuxMrQBhdDDA3p',
@@ -23,10 +23,10 @@ class SpotifyMoodClassificationServiceTest(unittest.TestCase):
                          PlaylistManager(test_connector).tracks_in_playlist(Sentiment.ANGER)[0]['track']['id'])
 
     def test_is_not_analysed(self):
-        self.assertFalse(SpotifyMoodClassificationService(SpotifyTestConnector()).is_analysed())
+        self.assertFalse(SpotifyMoodClassificationService(SpotipyTestFixure.as_wrapper()).is_analysed())
 
     def test_is_analysed(self):
-        test_connector = SpotifyTestConnector()
+        test_connector = SpotipyTestFixure.as_wrapper()
         playlist_manager = PlaylistManager(test_connector)
         for sentiment in Sentiment:
             playlist_manager.add_tracks_to_playlist(('2p9RbgJwcuxasdMrQBdDDA3p',), sentiment)
