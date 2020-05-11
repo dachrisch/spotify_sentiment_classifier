@@ -8,3 +8,4 @@ flask_wtf
 werkzeug
 pyopenssl
 beautifulsoup4
+gunicorn
