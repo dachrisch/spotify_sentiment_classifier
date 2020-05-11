@@ -9,6 +9,7 @@ class TestAnalyseWeb(unittest.TestCase, WithTestClientMixin):
 
     def setUp(self):
         self._setup_testclient()
+        self._setup_logged_in()
 
     def test_press_analyse_music_button(self):
         AnalyseView.service = WasAnalysedCatcher()

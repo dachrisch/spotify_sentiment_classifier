@@ -14,10 +14,15 @@ class WithTestClientMixin(object):
         AnalyseView.service = SpotifyAuthenticationTestService()
         MoodPlayerView.service = SpotifyAuthenticationTestService()
         os.environ['FLASK_CONFIGURATION'] = 'development'
-        app = create_app()
+        self.test_app = create_app()
+        self.test_client = self.test_app.test_client()
+
+    def _setup_logged_in(self):
         self.storage = MemoryStorage({'access_token': 'fake-token', 'expires_in': 1})
-        app.blueprints['spotify'].storage = self.storage
-        self.test_client = app.test_client()
+        self.test_app.blueprints['spotify'].storage = self.storage
+
+    def _setup_not_logged_in(self):
+        self.test_app.blueprints['spotify'].storage = MemoryStorage()
 
     def _setup_account_as_analysed(self):
         for sentiment in Sentiment:
@@ -26,6 +31,9 @@ class WithTestClientMixin(object):
             MoodPlayerView.service.with_token(None).playlist_manager.add_tracks_to_playlist(
                 ('2p9RbgJwcuxasdMrQBdDDA3p',),
                 sentiment)
+
+    def _setup_token_expired(self):
+        self.storage.token['expires_in'] = -1
 
 
 class WasAnalysedCatcher(object):

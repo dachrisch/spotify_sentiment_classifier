@@ -21,6 +21,8 @@ class WithSpotifyServiceMixin(object):
     def before_request(self, name):
         if self._valid_login():
             self.spotify_service = self.service.with_token(spotify.token)
+        else:
+            self.spotify_service = None
 
     def _valid_login(self):
         return spotify.authorized and (spotify.token['expires_in'] > 0)
@@ -76,15 +78,21 @@ class MoodPlayerView(FlaskView, WithSpotifyServiceMixin):
         self.log = logging.getLogger(__name__)
 
     def index(self):
-        self.log.debug(
-            'library is {}'.format(self._is_analysed() and 'analysed' or 'not analysed'))
-        form = SentimentForm(request.form)
-        return render_template('player.html', form=form, is_analysed=(self._is_analysed()))
+        return self.post()
 
     def post(self):
         self.log.debug(
             'library is {}'.format(self._is_analysed() and 'analysed' or 'not analysed'))
         form = SentimentForm(request.form)
+        playlist_id = self._playlist_id_from_form(form)
+        return render_template('player.html', form=form, is_loggedin=self._valid_login(),
+                               is_analysed=(self._is_analysed()), username=self._username_if_loggedin(),
+                               playlist_id=playlist_id)
+
+    def _username_if_loggedin(self):
+        return self.spotify_service and self.spotify_service.username()
+
+    def _playlist_id_from_form(self, form):
         sentiment_name = None
         if form.is_submitted():
             for name, value in form.data.items():
@@ -95,7 +103,7 @@ class MoodPlayerView(FlaskView, WithSpotifyServiceMixin):
         if sentiment_name:
             sentiment = Sentiment.__getitem__(sentiment_name)
             playlist_id = self.spotify_service.playlist_manager.playlist_for_sentiment(sentiment)['id']
-        return render_template('player.html', form=form, playlist_id=playlist_id, is_analysed=(self._is_analysed()))
+        return playlist_id
 
     def _is_analysed(self):
         return self.spotify_service and self.spotify_service.is_analysed()

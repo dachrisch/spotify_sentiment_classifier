@@ -11,14 +11,29 @@ class TestWebPlayer(TestCase, WithTestClientMixin):
 
     def setUp(self):
         self._setup_testclient()
+        self._setup_logged_in()
 
     def test_login_shown_when_not_logged_in(self):
+        self._setup_not_logged_in()
+
         response = self.test_client.get('/player/', follow_redirects=False)
         self.assertEqual(200, response.status_code)
         soup = BeautifulSoup(response.data, features='html.parser')
         button = soup.find(id='spotify_login')
         self.assertIsNotNone(button)
         self.assertIn('Login with Spotify', button.next)
+
+    def test_login_not_shown_when_logged_in(self):
+        response = self.test_client.get('/player/', follow_redirects=False)
+        self.assertEqual(200, response.status_code)
+        soup = BeautifulSoup(response.data, features='html.parser')
+        button = soup.find(id='spotify_login')
+        self.assertIsNone(button)
+
+        soup = BeautifulSoup(response.data, features='html.parser')
+        button = soup.find(id='logged_in_user')
+        self.assertIsNotNone(button)
+        self.assertIn('Logged in as', button.next)
 
     def test_button_active_when_not_analysed(self):
         response = self.test_client.get('/player/', follow_redirects=False)
@@ -53,6 +68,7 @@ class TestWebPlayer(TestCase, WithTestClientMixin):
         spotify_player = soup.find(id='spotify_player')
         expected_id = MoodPlayerView.service.with_token(None).playlist_manager.playlist_for_sentiment(Sentiment.ANGER)[
             'id']
+        self.assertIsNotNone(spotify_player)
         self.assertEqual('https://open.spotify.com/embed/playlist/{}'.format(expected_id), spotify_player.attrs['src'])
 
     def test_no_player_when_no_playlist_on_homepage(self):
