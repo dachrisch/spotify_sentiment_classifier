@@ -4,7 +4,9 @@ import spotipy
 
 
 class SpotipyConnectionWrapper(object):
+
     @classmethod
+    @lru_cache(128)
     def from_token(cls, access_token):
         return cls(spotipy.Spotify(auth=access_token))
 

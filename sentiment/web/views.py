@@ -1,6 +1,6 @@
 import logging
 
-from flask import render_template, request, url_for, flash
+from flask import render_template, request, url_for, flash, session
 from flask_classful import FlaskView
 from flask_dance.contrib.spotify import spotify
 from flask_wtf import FlaskForm
@@ -34,9 +34,18 @@ class HomeView(FlaskView, WithSpotifyServiceMixin):
         self.log = logging.getLogger(__name__)
 
     def index(self):
+        if session.get('next_url'):
+            return redirect(session.pop('next_url'))
         self.log.debug('user is {}'.format(self._valid_login() and 'logged in' or 'not logged in'))
-
         return render_template('homepage.html')
+
+
+class LoginView(FlaskView):
+    route = '/login'
+
+    def index(self):
+        session['next_url'] = request.args.get('next')
+        return redirect(url_for('spotify.login'))
 
 
 class AnalyseView(FlaskView, WithSpotifyServiceMixin):
@@ -49,7 +58,7 @@ class AnalyseView(FlaskView, WithSpotifyServiceMixin):
     def post(self):
         if not self._valid_login():
             self.log.debug('redirecting for authentication...')
-            return redirect(url_for('spotify.login'))
+            return redirect(url_for('LoginView:index', next=url_for('AnalyseView:post')))
         try:
             self.spotify_service.analyse()
             return redirect(url_for('MoodPlayerView:index'))

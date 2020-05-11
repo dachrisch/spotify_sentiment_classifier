@@ -12,6 +12,14 @@ class TestWebPlayer(TestCase, WithTestClientMixin):
     def setUp(self):
         self._setup_testclient()
 
+    def test_login_shown_when_not_logged_in(self):
+        response = self.test_client.get('/player/', follow_redirects=False)
+        self.assertEqual(200, response.status_code)
+        soup = BeautifulSoup(response.data, features='html.parser')
+        button = soup.find(id='spotify_login')
+        self.assertIsNotNone(button)
+        self.assertIn('Login with Spotify', button.next)
+
     def test_button_active_when_not_analysed(self):
         response = self.test_client.get('/player/', follow_redirects=False)
         self.assertEqual(200, response.status_code)

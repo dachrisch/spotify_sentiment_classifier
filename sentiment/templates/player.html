@@ -7,7 +7,8 @@
             <p>Music influences our mood in many situations, sometime consciously sometimes subtle. This app provides
                 support when going through times of a new beginning.</p>
         </header>
-        <a class="button round" href="{{ url_for('spotify.login') }}">Login with Spotify</a>
+        <a class="button round" href="{{ url_for('LoginView:index', next=url_for('MoodPlayerView:index')) }}"
+           id="spotify_login">Login with Spotify</a>
     </div>
 </section>
 

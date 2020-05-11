@@ -9,7 +9,7 @@ from flask_talisman import Talisman
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from sentiment.api.restplus import api
-from sentiment.web.views import HomeView, MoodPlayerView, AnalyseView
+from sentiment.web.views import HomeView, MoodPlayerView, AnalyseView, LoginView
 
 
 def create_app():
@@ -65,6 +65,7 @@ def add_views(flask_app):
     HomeView.register(flask_app)
     AnalyseView.register(flask_app)
     MoodPlayerView.register(flask_app)
+    LoginView.register(flask_app)
 
 
 def app_api(flask_app):
