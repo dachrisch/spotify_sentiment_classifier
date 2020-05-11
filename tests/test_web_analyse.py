@@ -27,9 +27,11 @@ class TestAnalyseWeb(unittest.TestCase, WithTestClientMixin):
     def test_user_has_no_saved_tracks(self):
         AnalyseView.service.connector = MagicMock()
         response = self.test_client.post('/analyse/', follow_redirects=False)
+        with self.test_client.session_transaction() as session:
+            self.assertIn(('error', "Analyse failed! You don't have any saved tracks."), session['_flashes'])
         AnalyseView.service.connector.audio_features.assert_not_called()
         self.assertEqual(302, response.status_code)
-        self.assertIn(b'<a href="/player/?error=Analyse+failed%21+You+don%27t+have+any+saved+tracks.">', response.data)
+        self.assertIn(b'<a href="/player/">', response.data)
 
 
 if __name__ == '__main__':

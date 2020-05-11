@@ -57,9 +57,15 @@ class TestWebPlayer(TestCase, WithTestClientMixin):
         self.assertIsNone(spotify_player)
 
     def test_error_message(self):
-        response = self.test_client.get('/player/?error="Test"', follow_redirects=False)
+        # setup error
+        with self.test_client.session_transaction() as session:
+            session['_flashes'] = [('error', "Analyse failed! You don't have any saved tracks."), ]
+
+        # check if error message present
+        response = self.test_client.get('/player/', follow_redirects=False)
         self.assertEqual(200, response.status_code)
         soup = BeautifulSoup(response.data, features='html.parser')
         error_messages = soup.find(id='error_messages')
 
         self.assertIsNotNone(error_messages)
+        self.assertIn('''Analyse failed! You don't have any saved tracks.''', error_messages.contents[1].next)

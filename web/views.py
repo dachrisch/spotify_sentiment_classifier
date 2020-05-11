@@ -54,7 +54,8 @@ class AnalyseView(FlaskView, WithSpotifyServiceMixin):
             return redirect(url_for('MoodPlayerView:index'))
         except UserHasNoTracksException as e:
             self.log.exception(e)
-            return redirect(url_for('MoodPlayerView:index', error="Analyse failed! You don't have any saved tracks."))
+            flash("Analyse failed! You don't have any saved tracks.", 'error')
+            return redirect(url_for('MoodPlayerView:index'))
 
 
 class MoodPlayerView(FlaskView, WithSpotifyServiceMixin):
@@ -68,9 +69,6 @@ class MoodPlayerView(FlaskView, WithSpotifyServiceMixin):
         self.log.debug(
             'library is {}'.format(self._is_analysed() and 'analysed' or 'not analysed'))
         form = SentimentForm(request.form)
-        message = request.args.get('error')
-        if message:
-            flash(message, 'error')
         return render_template('player.html', form=form, is_analysed=(self._is_analysed()))
 
     def post(self):
