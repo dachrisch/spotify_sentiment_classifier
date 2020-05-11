@@ -5,6 +5,8 @@ from logging import config, getLogger
 from flask import Flask, Blueprint
 from flask_bootstrap import Bootstrap
 from flask_dance.contrib.spotify import make_spotify_blueprint
+from flask_talisman import Talisman
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from api.restplus import api
 from web.views import HomeView, MoodPlayerView, AnalyseView
@@ -13,6 +15,8 @@ from web.views import HomeView, MoodPlayerView, AnalyseView
 def create_app():
     flask_app = Flask(__name__)
 
+    flask_app.wsgi_app = ProxyFix(flask_app.wsgi_app)
+
     flask_app.secret_key = '12345'
 
     add_views(flask_app)
@@ -20,6 +24,15 @@ def create_app():
     app_spotify_login(flask_app)
 
     Bootstrap(flask_app)
+
+    csp = {
+        'default-src': "'self'",
+        'img-src': '*',
+        'style-src': ("'self'", 'https://fonts.googleapis.com/css'),
+        'font-src': ("'self'", 'fonts.gstatic.com'),
+        'script-src': "'self'"
+    }
+    Talisman(flask_app, content_security_policy=csp)
     return flask_app
 
 
@@ -55,4 +68,8 @@ if __name__ == '__main__':
     log = getLogger(__name__)
     log.debug('following endpoints are available')
     [log.debug(repr(p)) for p in app.url_map.iter_rules()]
-    app.run(host='0.0.0.0', port=os.getenv('PORT', 5000), debug=True, ssl_context='adhoc')
+
+    if 'DEBUG' in os.environ.keys():
+        app.run(debug=True, ssl_context='adhoc')
+    else:
+        app.run(host='0.0.0.0', port=os.getenv('PORT', 5000), debug=True, ssl_context='adhoc')
