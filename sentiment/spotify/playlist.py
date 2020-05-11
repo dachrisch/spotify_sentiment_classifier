@@ -37,10 +37,6 @@ class PlaylistManager(object):
             Sentiment.ACCEPTANCE: 'gm_mood_5',
         }[sentiment]
 
-    @staticmethod
-    def map_names(dict_with_names: dict):
-        return tuple(map(lambda x: x['name'], dict_with_names))
-
     def __create_playlist(self, sentiment: Sentiment):
         playlist_name = PlaylistManager.to_playlist(sentiment)
         self.log.debug('creating playlist [%s]' % playlist_name)
