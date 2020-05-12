@@ -21,11 +21,12 @@ class PlaylistManager(object):
         return tracks
 
     def add_tracks_to_playlist(self, track_ids, sentiment: Sentiment):
-        playlist_for_sentiment = self.playlist_for_sentiment(sentiment)
-        if not playlist_for_sentiment:
-            playlist_for_sentiment = self.__create_playlist(sentiment)
-        self.log.debug('adding [%d] tracks to playlist [%s]' % (len(track_ids), playlist_for_sentiment))
-        self.spotify_connector.user_playlist_add_tracks(self.user_id, playlist_for_sentiment['id'], track_ids)
+        if track_ids:
+            playlist_for_sentiment = self.playlist_for_sentiment(sentiment)
+            if not playlist_for_sentiment:
+                playlist_for_sentiment = self.__create_playlist(sentiment)
+            self.log.debug('adding [%s] tracks to playlist [%s]' % (track_ids, playlist_for_sentiment))
+            self.spotify_connector.user_playlist_add_tracks(self.user_id, playlist_for_sentiment['id'], track_ids)
 
     @staticmethod
     def to_playlist(sentiment: Sentiment):

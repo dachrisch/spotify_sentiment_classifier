@@ -8,6 +8,10 @@ from sentiment.spotify.connector import SpotipyConnectionWrapper
 from sentiment.spotify.service import SpotifyAuthenticationService, SpotifyMoodClassificationService
 
 
+class NoTracksException(Exception):
+    pass
+
+
 class SpotipyTestFixure(spotipy.Spotify):
     @classmethod
     def as_wrapper(cls):
@@ -46,6 +50,8 @@ class SpotipyTestFixure(spotipy.Spotify):
         return self.tracks_in_playlists[playlist_id]
 
     def user_playlist_add_tracks(self, user, playlist_id, tracks, position=None):
+        if not tracks:
+            raise NoTracksException
         for track in tracks:
             if playlist_id not in self.tracks_in_playlists:
                 self.tracks_in_playlists[playlist_id] = {'items': []}
