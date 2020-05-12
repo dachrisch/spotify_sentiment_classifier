@@ -61,9 +61,10 @@ def add_security(flask_app):
         'default-src': "'self'",
         'img-src': '*',
         'style-src': (
-        "'self'", 'https://fonts.googleapis.com/css', "'unsafe-inline'", 'ajax.googleapis.com', 'cdnjs.cloudflare.com'),
+            "'self'", 'https://fonts.googleapis.com/css', "'unsafe-inline'", 'ajax.googleapis.com',
+            'cdnjs.cloudflare.com'),
         'font-src': ("'self'", 'fonts.gstatic.com', 'data:'),
-        'script-src': ("'self'", 'cdnjs.cloudflare.com'),
+        'script-src': ("'self'"),
         'frame-src': 'https://open.spotify.com/'
     }
     Talisman(flask_app, content_security_policy=csp)

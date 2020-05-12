@@ -5,11 +5,10 @@
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 {% endblock metas %}
 {% block styles %}
-<link href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css' rel='stylesheet'>
-<link href='https://cdnjs.cloudflare.com/ajax/libs/jQuery-ui-Slider-Pips/1.11.4/jquery-ui-slider-pips.css'
-      rel='stylesheet'>
+<link href='/static/css/jquery-ui.css' rel='stylesheet'>
+<link href='/static/css/jquery-ui-slider-pips.css' rel='stylesheet'>
 <link href="/static/css/main.css" rel="stylesheet"/>
-<link href="{{ url_for('static', filename='dist/css/style.min.css') }}" rel="stylesheet" type="text/css"/>
+<link href="/static/dist/css/style.min.css" rel="stylesheet" type="text/css"/>
 
 {% endblock styles %}
 
@@ -48,8 +47,7 @@
 <script src="/static/js/skel.min.js"></script>
 <script src="/static/js/util.js"></script>
 <script src="/static/js/main.js"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jQuery-ui-Slider-Pips/1.11.4/jquery-ui-slider-pips.min.js'></script>
-<script src="{{ url_for('static', filename='dist/js/main.min.js') }}"></script>
+<script src='/static/js/jquery-ui.min.js'></script>
+<script src='/static/js/jquery-ui-slider-pips.min.js'></script>
+<script src="/static/dist/js/main.min.js"></script>
 {% endblock scripts %}

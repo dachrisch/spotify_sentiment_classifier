@@ -76,7 +76,10 @@ SLIDER
     border-radius: 50px;
     background-color: $background !important;
   }
-
+  .ui-slider-tip {
+    width: 80px;
+    margin-left: -40px;
+  }
 }
 
 
