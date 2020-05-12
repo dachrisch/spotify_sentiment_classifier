@@ -2,8 +2,8 @@ import os
 
 from flask_dance.consumer.storage import MemoryStorage
 
-from app import create_app
 from sentiment.classify.sentiment import Sentiment
+from sentiment.web import create_app
 from sentiment.web.views import HomeView, AnalyseView, MoodPlayerView
 from tests.fixtures.spotify import SpotifyAuthenticationTestService
 

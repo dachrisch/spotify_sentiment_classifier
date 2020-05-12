@@ -12,7 +12,7 @@ class NoTracksException(Exception):
     pass
 
 
-class SpotipyTestFixure(spotipy.Spotify):
+class SpotipyTestFixture(spotipy.Spotify):
     @classmethod
     def as_wrapper(cls):
         return SpotipyConnectionWrapper(cls())
@@ -65,7 +65,7 @@ class SpotipyTestFixure(spotipy.Spotify):
 
 class SpotifyAuthenticationTestService(SpotifyAuthenticationService):
     def __init__(self):
-        self.connector = SpotipyConnectionWrapper(SpotipyTestFixure())
+        self.connector = SpotipyConnectionWrapper(SpotipyTestFixture())
 
     def with_token(self, token):
         return SpotifyMoodClassificationService(self.connector)

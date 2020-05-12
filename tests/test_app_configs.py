@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase
 
-from app import create_app
+from sentiment.web import create_app
 
 
 class TestAppConfigs(TestCase):
