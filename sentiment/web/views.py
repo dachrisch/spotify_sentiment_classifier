@@ -109,6 +109,13 @@ class MoodPlayerView(FlaskView, WithSpotifyServiceMixin):
         return self.spotify_service and self.spotify_service.is_analysed()
 
 
+class SliderView(FlaskView):
+    route = '/slider'
+
+    def index(self):
+        return render_template('hello_slider.html')
+
+
 def with_sentiment_buttons(cls):
     for sentiment in Sentiment:
         setattr(cls, sentiment.name, SubmitField(sentiment.name))

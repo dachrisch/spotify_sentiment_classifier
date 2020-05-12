@@ -6,6 +6,8 @@ flask_bootstrap
 flask_classful
 flask_wtf
 flask_talisman
+flask_assets
+pyscss
 werkzeug
 pyopenssl
 gunicorn

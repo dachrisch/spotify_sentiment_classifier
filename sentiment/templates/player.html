@@ -9,11 +9,6 @@
         </header>
         {% if is_loggedin %}
         <button class="button" disabled="disabled" id="logged_in_user">Logged in as {{ username }}</button>
-        {% else %}
-        <a class="button login" href="{{ url_for('LoginView:index', next=url_for('MoodPlayerView:index')) }}"
-           id="spotify_login">Login with Spotify</a>
-        {% endif %}
-
         {% if is_analysed %}
         <button class="btn btn-primary btn-sm" disabled="disabled" id="btn_analysed">
             Music library analysed
@@ -25,6 +20,11 @@
             </button>
         </form>
         {% endif %}
+        {% else %}
+        <a class="button login" href="{{ url_for('LoginView:index', next=url_for('MoodPlayerView:index')) }}"
+           id="spotify_login">Login with Spotify</a>
+        {% endif %}
+
     </div>
 </section>
 
@@ -47,6 +47,36 @@
 <!-- Main -->
 <main id="main">
     <div class="inner">
+        <div class="flex-item">
+            <div class="mood-box">
+                <div class="face-wrapper">
+                    <div class="case3" id="eyes">
+                        <div class="eyebrow left"></div>
+                        <div class="eye left">
+                            <div class="eyelid"></div>
+                        </div>
+                        <div class="bottomlid left"></div>
+                        <div class="eyebrow right"></div>
+                        <div class="eye right">
+                            <div class="eyelid"></div>
+                        </div>
+                        <div class="bottomlid right"></div>
+
+                    </div>
+                    <div class="case3" id="mouth">
+                        <div id="mouth-open"></div>
+                    </div>
+                    <div class="case3" id="face-bg">
+                        <div class="face-light"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex-item">
+            <h4> How Are You Feeling Today?</h4>
+            <div id="slider"></div>
+
+        </div>
         <!-- Boxes -->
         <div class="thumbnails">
             <div class="box">
