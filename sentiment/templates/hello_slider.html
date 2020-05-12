@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href='/static/css/emoji.css' rel='stylesheet'>
+    <link href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css' rel='stylesheet'>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/jQuery-ui-Slider-Pips/1.11.4/jquery-ui-slider-pips.css'
+          rel='stylesheet'>
+    <link href="{{ url_for('static', filename='dist/css/style.min.css') }}" rel="stylesheet" type="text/css"/>
+
+</head>
+<body translate="no">
+<div class="flexbox">
+    <div class="flex-item">
+        <h2>Hello!</h2>
+        <div class="mood-box">
+            <div class="face-wrapper">
+                <div class="case3" id="eyes">
+                    <div class="eyebrow left"></div>
+                    <div class="eye left">
+                        <div class="eyelid"></div>
+                    </div>
+                    <div class="bottomlid left"></div>
+                    <div class="eyebrow right"></div>
+                    <div class="eye right">
+                        <div class="eyelid"></div>
+                    </div>
+                    <div class="bottomlid right"></div>
+
+                </div>
+                <div class="case3" id="mouth">
+                    <div id="mouth-open"></div>
+                </div>
+                <div class="case3" id="face-bg">
+                    <div class="face-light"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex-item">
+        <h4> How Are You Feeling Today?</h4>
+        <div id="slider"></div>
+
+    </div>
+</div>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jQuery-ui-Slider-Pips/1.11.4/jquery-ui-slider-pips.min.js'></script>
+<script src="{{ url_for('static', filename='dist/js/main.min.js') }}"></script>
+</body>
+</html>

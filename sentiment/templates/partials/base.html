@@ -6,8 +6,7 @@
 {% endblock metas %}
 {% block styles %}
 <link href="/static/css/main.css" rel="stylesheet"/>
-<link href="{{ url_for('static', filename='dist/css/style.min.css') }}" rel="stylesheet" type="text/css"
-/>
+
 {% endblock styles %}
 
 {% block content %}
@@ -45,6 +44,5 @@
 <script src="/static/js/skel.min.js"></script>
 <script src="/static/js/util.js"></script>
 <script src="/static/js/main.js"></script>
-<script src="/static/js/vue.js"></script>
 <script src="{{ url_for('static', filename='dist/js/main.min.js') }}"></script>
 {% endblock scripts %}
