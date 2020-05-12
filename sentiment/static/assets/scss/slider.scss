@@ -31,16 +31,6 @@ $red-shadow: #ff3279;
     right: 0px;
   }
 
-html,body{
-  height: 100%;
-  width: 100%;
-  font-family: 'Baloo', cursive;
-  font-size: 1.5em;
-  letter-spacing: .8px;
-  color: tomato;
-  background-color: $background;
-}
-
 /**
 FLEXBOX
 **/
@@ -79,7 +69,6 @@ SLIDER
   }
 
   &.ui-slider{
-    border: 5px solid $slider-light;
     background: -webkit-linear-gradient(left, $darkblue, $pink 50%);;
   }
 
@@ -94,20 +83,6 @@ SLIDER
 .ui-slider-horizontal .ui-slider-range-max{
    background-color: $background;
 }
-.ui-slider-horizontal .ui-slider-range-max{
-  background-color: $background !important;
-}
-
-
-.ui-slider-pips .ui-slider-line{
-    background: #fff !important;
-  opacity: .5;
-    width:5px;
-  border-radius: 50px;
-  position:absolute;
-  z-index: -1;
-    height:20px;
-  }
 
 .mood-box{
   height: 100%;
@@ -472,11 +447,5 @@ KEYFRAMES
   90%{transform:rotate(5deg)};
   100%{transform:rotate(0deg)};
 }
-
-
-.ui-slider-horizontal .ui-slider-range-max{
-  background: red;
-}
-
 
 

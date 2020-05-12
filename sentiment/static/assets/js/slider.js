@@ -37,19 +37,13 @@ $(function() {
         break; 
       }
     }
-    
-    
   })
-  .slider('pips', {
-    first: 'pip',  
-    last: 'pip',   
-  
-});
+  .slider('float', {
+    labels : ['Denial', 'Anger', 'Depression', 'Bargaining', 'Acceptance']
+  }
+);
 
 })
-
-
-
 
 //remove previous case classes
 function removeClass(){
