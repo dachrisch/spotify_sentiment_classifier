@@ -2,6 +2,7 @@ import os
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
+from flask import Flask
 from flask.testing import FlaskClient
 from flask_dance.consumer.storage import MemoryStorage
 from requests import Response
@@ -135,5 +136,5 @@ class FlaskClientSetup(object):
         return FlaskClientValidatorFactory(self.client, base_url)
 
 
-def with_client(client: FlaskClient):
-    return FlaskClientSetup(client)
+def with_client(app: Flask):
+    return FlaskClientSetup(app.test_client())
