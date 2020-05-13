@@ -25,7 +25,10 @@ class WithSpotifyServiceMixin(object):
             self.spotify_service = None
 
     def _valid_login(self):
-        return spotify.authorized and (spotify.token['expires_in'] > 0)
+        if spotify.token and 'expires_in' in spotify.token:
+            return spotify.authorized and (spotify.token['expires_in'] > 0)
+        else:
+            return spotify.authorized
 
 
 class HomeView(FlaskView, WithSpotifyServiceMixin):
