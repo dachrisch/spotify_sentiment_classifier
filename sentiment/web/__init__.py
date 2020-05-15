@@ -17,7 +17,7 @@ def create_app():
 
     flask_app.wsgi_app = ProxyFix(flask_app.wsgi_app)
 
-    flask_app.secret_key = os.urandom(24)
+    flask_app.secret_key = os.getenv('FLASK_SECRET_KEY', os.urandom(24))
 
     configure_app(flask_app)
     add_views(flask_app)
