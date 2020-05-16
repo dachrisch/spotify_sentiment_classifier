@@ -46,7 +46,7 @@ class HomeView(FlaskView, SpotifyServiceMixin):
 
 
 class LoginView(FlaskView):
-    route = '/login'
+    route_base = '/login'
 
     def index(self):
         session['next_url'] = request.args.get('next')
@@ -54,7 +54,7 @@ class LoginView(FlaskView):
 
 
 class AnalyseView(FlaskView, SpotifyServiceMixin):
-    route = '/analyse'
+    route_base = '/analyse'
 
     def __init__(self):
         super().__init__()
@@ -87,12 +87,11 @@ class MoodPlayerView(FlaskView, SpotifyServiceMixin):
         self.log.debug(
             'library is {}'.format(self._is_analysed() and 'analysed' or 'not analysed'))
         form = SentimentForm(request.form)
-        playlist_id = self._playlist_id_from_form(form)
         return render_template('player.html', form=form, is_loggedin=self._valid_login(),
-                               is_analysed=(self._is_analysed()), username=self._username_if_loggedin(),
-                               playlist_id=playlist_id)
+                               is_analysed=(self._is_analysed()), username=self._username_if_logged_in(),
+                               playlist_id=(self._playlist_id_from_form(form)))
 
-    def _username_if_loggedin(self):
+    def _username_if_logged_in(self):
         return self.spotify_service and self.spotify_service.username()
 
     def _playlist_id_from_form(self, form: FlaskForm):

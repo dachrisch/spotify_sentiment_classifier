@@ -82,9 +82,10 @@
             </div>
             <div class="box">
                 <span class="image fit"><img alt="" src="/static/images/pic02.jpg"/></span>
-                <div class="inner">
+                <div class="inner" id="player">
                     <h2>Enjoy your own music</h2>
-                    <form action="{{ url_for('MoodPlayerView:post') }}" class="no-padding" id="sentiment_form"
+                    <form action="{{ url_for('MoodPlayerView:post', _anchor='player') }}" class="no-padding"
+                          id="sentiment_form"
                           method="post">
                         {{ form.csrf_token }}
                         {% for button in form.sentiment_buttons() %}

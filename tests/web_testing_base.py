@@ -165,7 +165,7 @@ class ResponseValidator(object):
         token = self._find(id='csrf_token')[0]
         if token:
             data['csrf_token'] = token.attrs['value']
-        return self.flask_client_validator.post(submit_form['action'], data=data)
+        return self.flask_client_validator.post(urlparse(submit_form['action']).path, data=data)
 
     def on_page(self, page):
         assert self.url == page, 'Expected to be on page [{}], but was [{}]'.format(page, self.url)
