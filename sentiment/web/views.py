@@ -8,27 +8,21 @@ from werkzeug.utils import redirect
 from wtforms import SubmitField
 
 from sentiment.classify.sentiment import Sentiment
-from sentiment.spotify.service import SpotifyAuthenticationService, SpotifyMoodClassificationService, \
-    UserHasNoTracksException
+from sentiment.spotify.service import SpotifyAuthenticationService, UserHasNoTracksException
 
 
 class SpotifyServiceMixin(object):
-    service = SpotifyAuthenticationService()
-
-    def __init__(self):
-        self.spotify_service: SpotifyMoodClassificationService = None
+    _auth_service = SpotifyAuthenticationService()
 
     def before_request(self, name):
-        if self._valid_login():
-            self.spotify_service = self.service.with_token(spotify.token)
-        else:
-            self.spotify_service = None
+        self.auth_service.catch_authentication(spotify)
 
     def _valid_login(self):
-        if spotify.token and 'expires_in' in spotify.token:
-            return spotify.authorized and (spotify.token['expires_in'] > 0)
-        else:
-            return spotify.authorized
+        return self.auth_service.is_token_valid()
+
+    @property
+    def auth_service(self) -> SpotifyAuthenticationService:
+        return SpotifyServiceMixin._auth_service
 
 
 class HomeView(FlaskView, SpotifyServiceMixin):
@@ -65,7 +59,7 @@ class AnalyseView(FlaskView, SpotifyServiceMixin):
             self.log.debug('redirecting for authentication...')
             return redirect(url_for('LoginView:index', next=url_for('AnalyseView:post')))
         try:
-            self.spotify_service.analyse()
+            self.auth_service.service_instance.analyse()
             return redirect(url_for('MoodPlayerView:index'))
         except UserHasNoTracksException as e:
             self.log.exception(e)
@@ -92,7 +86,7 @@ class MoodPlayerView(FlaskView, SpotifyServiceMixin):
                                playlist_id=(self._playlist_id_from_form(form)))
 
     def _username_if_logged_in(self):
-        return self.spotify_service and self.spotify_service.username()
+        return self._valid_login() and self.auth_service.service_instance.username()
 
     def _playlist_id_from_form(self, form: FlaskForm):
         sentiment_name = None
@@ -104,11 +98,11 @@ class MoodPlayerView(FlaskView, SpotifyServiceMixin):
         playlist_id = None
         if sentiment_name:
             sentiment = Sentiment.__getitem__(sentiment_name)
-            playlist_id = self.spotify_service.playlist_manager.playlist_for_sentiment(sentiment)['id']
+            playlist_id = self.auth_service.service_instance.playlist_manager.playlist_for_sentiment(sentiment)['id']
         return playlist_id
 
     def _is_analysed(self):
-        return self.spotify_service and self.spotify_service.is_analysed()
+        return self._valid_login() and self.auth_service.service_instance.is_analysed()
 
 
 class SliderView(FlaskView):

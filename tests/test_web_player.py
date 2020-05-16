@@ -3,7 +3,6 @@ from unittest import TestCase
 from bs4 import BeautifulSoup
 
 from sentiment.classify.sentiment import Sentiment
-from sentiment.web.views import MoodPlayerView
 from tests.web_testing_base import TestClientMixin
 
 
@@ -75,7 +74,7 @@ class TestWebPlayer(TestCase, TestClientMixin):
         self.assertEqual(200, response.status_code)
         soup = BeautifulSoup(response.data, features='html.parser')
         spotify_player = soup.find(id='spotify_player')
-        expected_id = MoodPlayerView.service.with_token(None).playlist_manager.playlist_for_sentiment(Sentiment.ANGER)[
+        expected_id = self._auth_service.service_instance.playlist_manager.playlist_for_sentiment(Sentiment.ANGER)[
             'id']
         self.assertIsNotNone(spotify_player)
         self.assertEqual('https://open.spotify.com/embed/playlist/{}'.format(expected_id), spotify_player.attrs['src'])

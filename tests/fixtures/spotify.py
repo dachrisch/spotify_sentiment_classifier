@@ -68,10 +68,13 @@ class SpotipyTestFixture(spotipy.Spotify):
 
 class SpotifyAuthenticationTestService(SpotifyAuthenticationService):
     def __init__(self):
-        self.connector = SpotipyConnectionWrapper(SpotipyTestFixture())
+        super().__init__()
+        self._connector = SpotipyConnectionWrapper(SpotipyTestFixture())
+        self._service_instance = SpotifyMoodClassificationService(self._connector)
 
-    def with_token(self, token):
-        return SpotifyMoodClassificationService(self.connector)
+    @property
+    def service_instance(self) -> SpotifyMoodClassificationService:
+        return self._service_instance
 
 
 class RequestsMockFixtureMixin(object):

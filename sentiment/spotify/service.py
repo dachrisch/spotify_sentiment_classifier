@@ -1,14 +1,16 @@
 import logging
 
+from flask_dance.contrib.spotify import spotify
+
 from sentiment.classify.classify import FeatureClassifier
 from sentiment.classify.sentiment import Sentiment
 from sentiment.spotify.connector import SpotipyConnectionWrapper
 from sentiment.spotify.playlist import PlaylistManager
 
 
-class SpotifyAuthenticationService(object):
-    def with_token(self, token):
-        return SpotifyMoodClassificationService(SpotipyConnectionWrapper.from_token(token['access_token']))
+class TokenNotValidException(Exception):
+    def __init__(self, token: dict):
+        super(TokenNotValidException, self).__init__('Token [{}] not valid'.format(token))
 
 
 class UserHasNoTracksException(Exception):
@@ -71,3 +73,25 @@ class NoopSpotifyMoodClassificationService(SpotifyMoodClassificationService):
 
     def username(self):
         raise NotImplementedError
+
+
+class SpotifyAuthenticationService(object):
+    def __init__(self):
+        self.authorized = False
+        self.token = {}
+
+    @property
+    def service_instance(self) -> SpotifyMoodClassificationService:
+        if not self.is_token_valid():
+            TokenNotValidException(self.token)
+        return SpotifyMoodClassificationService(SpotipyConnectionWrapper.from_token(self.token['access_token']))
+
+    def catch_authentication(self, spotify_authentication: spotify):
+        self.authorized = spotify_authentication.authorized
+        self.token = spotify_authentication.token
+
+    def is_token_valid(self):
+        if self.token and 'expires_in' in self.token:
+            return self.authorized and (self.token['expires_in'] > 0)
+        else:
+            return self.authorized

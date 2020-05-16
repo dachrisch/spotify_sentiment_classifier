@@ -9,15 +9,14 @@ from requests import Response
 
 from sentiment.classify.sentiment import Sentiment
 from sentiment.web import create_app
-from sentiment.web.views import HomeView, AnalyseView, MoodPlayerView
+from sentiment.web.views import SpotifyServiceMixin
 from tests.fixtures.spotify import SpotifyAuthenticationTestService
 
 
 class TestClientMixin(object):
     def _setup_testclient(self):
-        HomeView.service = SpotifyAuthenticationTestService()
-        AnalyseView.service = SpotifyAuthenticationTestService()
-        MoodPlayerView.service = SpotifyAuthenticationTestService()
+        self._auth_service = SpotifyAuthenticationTestService()
+        SpotifyServiceMixin._auth_service = self._auth_service
         os.environ['FLASK_CONFIGURATION'] = 'development'
         self.test_app = create_app()
         self.test_client = self.test_app.test_client()
@@ -31,11 +30,8 @@ class TestClientMixin(object):
 
     def _setup_account_as_analysed(self):
         for sentiment in Sentiment:
-            HomeView.service.with_token(None).playlist_manager.add_tracks_to_playlist(('2p9RbgJwcuxasdMrQBdDDA3p',),
-                                                                                      sentiment)
-            MoodPlayerView.service.with_token(None).playlist_manager.add_tracks_to_playlist(
-                ('2p9RbgJwcuxasdMrQBdDDA3p',),
-                sentiment)
+            self._auth_service.service_instance.playlist_manager.add_tracks_to_playlist(('2p9RbgJwcuxasdMrQBdDDA3p',),
+                                                                                        sentiment)
 
     def _setup_token_expired(self):
         self.storage.token['expires_in'] = -1
@@ -47,10 +43,6 @@ class TestClientMixin(object):
 class WasAnalysedCatcher(object):
     def __init__(self):
         self._analyse_was_analysed = False
-
-    # noinspection PyUnusedLocal
-    def with_token(self, token):
-        return self
 
     def analyse(self):
         self._analyse_was_analysed = True
