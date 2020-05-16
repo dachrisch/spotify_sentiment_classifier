@@ -11,3 +11,4 @@ pyscss
 werkzeug
 pyopenssl
 gunicorn
+pyjwt

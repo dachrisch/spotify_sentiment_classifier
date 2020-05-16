@@ -1,5 +1,7 @@
+import datetime
 import logging
 
+import jwt
 from flask_dance.contrib.spotify import spotify
 
 from sentiment.classify.classify import FeatureClassifier
@@ -79,6 +81,7 @@ class SpotifyAuthenticationService(object):
     def __init__(self):
         self.authorized = False
         self.token = {}
+        self.secret_key = None
 
     @property
     def service_instance(self) -> SpotifyMoodClassificationService:
@@ -95,3 +98,22 @@ class SpotifyAuthenticationService(object):
             return self.authorized and (self.token['expires_in'] > 0)
         else:
             return self.authorized
+
+    @property
+    def auth_token(self):
+        if not self.secret_key:
+            raise Exception('Secret key not configured. Have you called [{}]?'.format(self.configure_token))
+        auth_token = None
+        if self.is_token_valid():
+            payload = {
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
+                'iat': datetime.datetime.utcnow(),
+                'sub': self.token
+            }
+            auth_token = jwt.encode(payload,
+                                    self.secret_key,
+                                    algorithm='HS256')
+        return auth_token
+
+    def configure_token(self, secret_key):
+        self.secret_key = secret_key

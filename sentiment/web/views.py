@@ -1,6 +1,6 @@
 import logging
 
-from flask import render_template, request, url_for, flash, session
+from flask import render_template, request, url_for, flash, session, current_app
 from flask_classful import FlaskView
 from flask_dance.contrib.spotify import spotify
 from flask_wtf import FlaskForm
@@ -15,6 +15,7 @@ class SpotifyServiceMixin(object):
     _auth_service = SpotifyAuthenticationService()
 
     def before_request(self, name):
+        self.auth_service.configure_token(current_app.config.get('SECRET_KEY'))
         self.auth_service.catch_authentication(spotify)
 
     def _valid_login(self):
@@ -83,7 +84,7 @@ class MoodPlayerView(FlaskView, SpotifyServiceMixin):
         form = SentimentForm(request.form)
         return render_template('player.html', form=form, is_loggedin=self._valid_login(),
                                is_analysed=(self._is_analysed()), username=self._username_if_logged_in(),
-                               playlist_id=(self._playlist_id_from_form(form)))
+                               playlist_id=(self._playlist_id_from_form(form)), auth_token=self.auth_service.auth_token)
 
     def _username_if_logged_in(self):
         return self._valid_login() and self.auth_service.service_instance.username()
