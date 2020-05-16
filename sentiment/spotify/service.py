@@ -89,9 +89,16 @@ class SpotifyAuthenticationService(object):
             TokenNotValidException(self.token)
         return SpotifyMoodClassificationService(SpotipyConnectionWrapper.from_token(self.token['access_token']))
 
-    def catch_authentication(self, spotify_authentication: spotify):
+    def catch_authentication_from_web(self, spotify_authentication: spotify):
         self.authorized = spotify_authentication.authorized
         self.token = spotify_authentication.token
+
+    def catch_authentification_from_auth_token(self, auth_token):
+        if not self.secret_key:
+            raise Exception('Secret key not configured. Have you called [{}]?'.format(self.configure_token))
+        payload = jwt.decode(auth_token, self.secret_key, algorithms=('HS256',))
+        if payload and 'sub' in payload:
+            self.token = payload['sub']
 
     def is_token_valid(self):
         if self.token and 'expires_in' in self.token:

@@ -12,3 +12,4 @@ werkzeug
 pyopenssl
 gunicorn
 pyjwt
+decorator

@@ -3,23 +3,24 @@ from abc import abstractmethod
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
+from flask import g
 from flask.testing import FlaskClient
 from flask_dance.consumer.storage import MemoryStorage
 from requests import Response
 
 from sentiment.classify.sentiment import Sentiment
 from sentiment.web import create_app
-from sentiment.web.views import SpotifyServiceMixin
 from tests.fixtures.spotify import SpotifyAuthenticationTestService
 
 
 class TestClientMixin(object):
     def _setup_testclient(self):
-        self._auth_service = SpotifyAuthenticationTestService()
-        SpotifyServiceMixin._auth_service = self._auth_service
         os.environ['FLASK_CONFIGURATION'] = 'development'
         self.test_app = create_app()
         self.test_client = self.test_app.test_client()
+        self.test_app.app_context().push()
+        self._auth_service = SpotifyAuthenticationTestService()
+        g.auth_service = self._auth_service
 
     def _setup_logged_in(self):
         self.storage = MemoryStorage({'access_token': 'fake-token', 'expires_in': 1})
