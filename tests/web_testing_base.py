@@ -13,7 +13,7 @@ from sentiment.web.views import HomeView, AnalyseView, MoodPlayerView
 from tests.fixtures.spotify import SpotifyAuthenticationTestService
 
 
-class WithTestClientMixin(object):
+class TestClientMixin(object):
     def _setup_testclient(self):
         HomeView.service = SpotifyAuthenticationTestService()
         AnalyseView.service = SpotifyAuthenticationTestService()

@@ -1,9 +1,9 @@
 import unittest
 
-from tests.web_testing_base import WithTestClientMixin
+from tests.web_testing_base import TestClientMixin
 
 
-class TestLoginWeb(unittest.TestCase, WithTestClientMixin):
+class TestLoginWeb(unittest.TestCase, TestClientMixin):
 
     def setUp(self):
         self._setup_testclient()

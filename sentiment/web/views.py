@@ -12,7 +12,7 @@ from sentiment.spotify.service import SpotifyAuthenticationService, SpotifyMoodC
     UserHasNoTracksException
 
 
-class WithSpotifyServiceMixin(object):
+class SpotifyServiceMixin(object):
     service = SpotifyAuthenticationService()
 
     def __init__(self):
@@ -31,7 +31,7 @@ class WithSpotifyServiceMixin(object):
             return spotify.authorized
 
 
-class HomeView(FlaskView, WithSpotifyServiceMixin):
+class HomeView(FlaskView, SpotifyServiceMixin):
     route_base = '/'
 
     def __init__(self):
@@ -53,7 +53,7 @@ class LoginView(FlaskView):
         return redirect(url_for('spotify.login'))
 
 
-class AnalyseView(FlaskView, WithSpotifyServiceMixin):
+class AnalyseView(FlaskView, SpotifyServiceMixin):
     route = '/analyse'
 
     def __init__(self):
@@ -73,7 +73,7 @@ class AnalyseView(FlaskView, WithSpotifyServiceMixin):
             return redirect(url_for('MoodPlayerView:index'))
 
 
-class MoodPlayerView(FlaskView, WithSpotifyServiceMixin):
+class MoodPlayerView(FlaskView, SpotifyServiceMixin):
     route_base = '/player'
 
     def __init__(self):
@@ -97,7 +97,7 @@ class MoodPlayerView(FlaskView, WithSpotifyServiceMixin):
 
     def _playlist_id_from_form(self, form: FlaskForm):
         sentiment_name = None
-        if form.is_submitted():
+        if self._is_analysed() and form.is_submitted():
             for name, value in form.data.items():
                 if value:
                     sentiment_name = name

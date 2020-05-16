@@ -2,10 +2,10 @@ import unittest
 from unittest.mock import MagicMock
 
 from sentiment.web.views import AnalyseView
-from tests.web_testing_base import WithTestClientMixin, WasAnalysedCatcher
+from tests.web_testing_base import TestClientMixin, WasAnalysedCatcher
 
 
-class TestAnalyseWeb(unittest.TestCase, WithTestClientMixin):
+class TestAnalyseWeb(unittest.TestCase, TestClientMixin):
 
     def setUp(self):
         self._setup_testclient()

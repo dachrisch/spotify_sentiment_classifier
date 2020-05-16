@@ -8,7 +8,6 @@ class PlaylistManager(object):
 
     def __init__(self, spotify_connector: SpotipyConnectionWrapper):
         self.spotify_connector = spotify_connector
-        self.user_id = self.spotify_connector.current_user()['id']
         self.log = logging.getLogger(__name__)
 
     def tracks_in_playlist(self, sentiment: Sentiment):
@@ -26,7 +25,8 @@ class PlaylistManager(object):
             if not playlist_for_sentiment:
                 playlist_for_sentiment = self.__create_playlist(sentiment)
             self.log.debug('adding [%s] tracks to playlist [%s]' % (track_ids, playlist_for_sentiment))
-            self.spotify_connector.user_playlist_add_tracks(self.user_id, playlist_for_sentiment['id'], track_ids)
+            self.spotify_connector.user_playlist_add_tracks(self.spotify_connector.current_user()['id'],
+                                                            playlist_for_sentiment['id'], track_ids)
 
     @staticmethod
     def to_playlist(sentiment: Sentiment):
@@ -41,7 +41,8 @@ class PlaylistManager(object):
     def __create_playlist(self, sentiment: Sentiment):
         playlist_name = PlaylistManager.to_playlist(sentiment)
         self.log.debug('creating playlist [%s]' % playlist_name)
-        return self.spotify_connector.user_playlist_create(self.user_id, playlist_name, False)
+        return self.spotify_connector.user_playlist_create(self.spotify_connector.current_user()['id'], playlist_name,
+                                                           False)
 
     def playlist_for_sentiment(self, sentiment: Sentiment):
         playlist = None
@@ -56,4 +57,3 @@ class PlaylistManager(object):
 
         self.log.debug('sentiment playlist for [{}]: {}'.format(sentiment, playlist))
         return playlist
-

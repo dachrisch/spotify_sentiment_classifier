@@ -4,10 +4,10 @@ from bs4 import BeautifulSoup
 
 from sentiment.classify.sentiment import Sentiment
 from sentiment.web.views import MoodPlayerView
-from tests.web_testing_base import WithTestClientMixin
+from tests.web_testing_base import TestClientMixin
 
 
-class TestWebPlayer(TestCase, WithTestClientMixin):
+class TestWebPlayer(TestCase, TestClientMixin):
 
     def setUp(self):
         self._setup_testclient()

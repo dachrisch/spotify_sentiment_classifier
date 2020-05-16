@@ -57,3 +57,17 @@ class SpotifyMoodClassificationService(object):
         user_saved_tracks = self.spotify_connector.current_user_saved_tracks()
         self.log.debug('user has the following saved tracks: [{}]'.format(user_saved_tracks))
         return tuple(map(lambda x: x['track'], user_saved_tracks['items']))
+
+
+class NoopSpotifyMoodClassificationService(SpotifyMoodClassificationService):
+    def __init__(self):
+        super().__init__(None)
+
+    def analyse(self):
+        raise NotImplementedError()
+
+    def is_analysed(self):
+        return False
+
+    def username(self):
+        raise NotImplementedError
