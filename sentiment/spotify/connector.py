@@ -19,7 +19,10 @@ class SpotipyConnectionWrapper(object):
 
     @lru_cache(128)
     def user_playlist_add_tracks(self, user_id, playlist_id, track_ids):
-        return self.__connection.user_playlist_add_tracks(user_id, playlist_id, track_ids)
+        try:
+            return self.__connection.user_playlist_add_tracks(user_id, playlist_id, track_ids)
+        finally:
+            self.playlist_tracks.cache_clear()
 
     @lru_cache(128)
     def current_user_playlists(self, limit=50, offset=0):
@@ -35,7 +38,10 @@ class SpotipyConnectionWrapper(object):
 
     @lru_cache(128)
     def user_playlist_create(self, user, name, public=True, description=""):
-        return self.__connection.user_playlist_create(user, name, public=public, description=description)
+        try:
+            return self.__connection.user_playlist_create(user, name, public=public, description=description)
+        finally:
+            self.current_user_playlists.cache_clear()
 
     @lru_cache(128)
     def audio_features(self, tracks=None):

@@ -32,7 +32,7 @@ class SpotipyTestFixture(spotipy.Spotify):
                 'id': '1121820983', 'images': [], 'type': 'user', 'uri': 'spotify:user:1121820983'}
 
     def user_playlist_create(self, user, name, public=True, description=""):
-        playlist_id = random.randint(0, 100000)
+        playlist_id = str(random.randint(0, 100000))
         self.playlists['items'].append({'name': name, 'id': playlist_id})
         return {'id': playlist_id}
 

@@ -1,8 +1,8 @@
 import os
+from abc import abstractmethod
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
-from flask import Flask
 from flask.testing import FlaskClient
 from flask_dance.consumer.storage import MemoryStorage
 from requests import Response
@@ -40,6 +40,9 @@ class WithTestClientMixin(object):
     def _setup_token_expired(self):
         self.storage.token['expires_in'] = -1
 
+    def _run_flow(self):
+        return FlaskClientSetup(self.test_app.test_client())
+
 
 class WasAnalysedCatcher(object):
     def __init__(self):
@@ -66,6 +69,10 @@ class FlaskClientValidator(object):
         response = self.client.get(url, base_url=self.base_url, follow_redirects=False)
         return ResponseValidator(self, url, response)
 
+    def post(self, url, **post_data):
+        response = self.client.post(url, base_url=self.base_url, follow_redirects=False, **post_data)
+        return ResponseValidator(self, url, response)
+
 
 def expect_urls_matching(expected: str, actual: str, message: str):
     expected_url = urlparse(expected)
@@ -90,6 +97,40 @@ class RedirectValidator(object):
         return self.flask_client_validator.get(self.location)
 
 
+class ItemValidator(object):
+    @classmethod
+    def noop(cls):
+        return NoopItemValidator()
+
+    @classmethod
+    def attr(cls, name, value):
+        return ItemAttributeValidator(name, value)
+
+    @abstractmethod
+    def validate(self, item_find_clause, item):
+        raise NotImplementedError
+
+
+class ItemAttributeValidator(ItemValidator):
+
+    def __init__(self, name, value):
+        self.value = value
+        self.name = name
+
+    def validate(self, item_find_clause, item):
+        assert self.name in item.attrs, 'Attribute [{}] not found in [{}]'.format(self.name, item.attrs)
+        assert self.value == item.attrs[
+            self.name], 'Expected item [{}] with attribute [{}] to be [{}], but was [{}]'.format(item_find_clause,
+                                                                                                 self.name,
+                                                                                                 self.value,
+                                                                                                 item.attrs[self.name])
+
+
+class NoopItemValidator(ItemValidator):
+    def validate(self, item_find_clause, item):
+        pass
+
+
 class ResponseValidator(object):
     def __init__(self, flask_client_validator: FlaskClientValidator, url: str, response: Response):
         self.url = url
@@ -97,22 +138,53 @@ class ResponseValidator(object):
         self.response = response
 
     def responds(self, status_code: int):
-        message = 'While getting [{}], status code was [{}], but expected [{}]'.format(self.url,
-                                                                                       self.response.status_code,
-                                                                                       status_code)
+        message = 'Status code was [{}], but expected [{}] while getting [{}]: {}'.format(self.response.status_code,
+                                                                                          status_code, self.url,
+                                                                                          self.response.data)
         assert status_code == self.response.status_code, message
         return self
 
-    def click_button(self, **find_clause):
-        soup = BeautifulSoup(self.response.data, features='html.parser')
-        found_button = soup.find(**find_clause)
-        assert found_button is not None, 'Button [{}] not found in [{}]'.format(find_clause, soup)
-        assert 'href' in found_button.attrs, 'Button [{}] has not HREF: {}'.format(find_clause, found_button)
+    def click_button(self, **button_find_clause):
+        found_button = self._assert_find(**button_find_clause)
+        assert 'href' in found_button.attrs, 'Button [{}] has not HREF: {}'.format(button_find_clause, found_button)
         return self.flask_client_validator.get(found_button.attrs['href'])
+
+    def submit_button(self, in_form, **button_find_clause):
+        submit_form = self._assert_find(id=in_form)
+        submit_button = self._assert_find(**button_find_clause)
+        button_in_form = False
+        for parent in submit_button.parents:
+            if 'id' in parent.attrs and parent.attrs['id'] == in_form:
+                button_in_form = True
+                break
+        assert button_in_form, 'Button [{}] not found in [{}]'.format(button_find_clause, in_form)
+        if not submit_form['method'] == 'post':
+            raise Exception('Unknown form method in [{}]'.format(submit_form))
+
+        data = {submit_button['id']: submit_button['id']}
+        token = self._find(id='csrf_token')[0]
+        if token:
+            data['csrf_token'] = token.attrs['value']
+        return self.flask_client_validator.post(submit_form['action'], data=data)
 
     def on_page(self, page):
         assert self.url == page, 'Expected to be on page [{}], but was [{}]'.format(page, self.url)
         return self
+
+    def has(self, validator=ItemValidator.noop(), **item_find_clause):
+        item = self._assert_find(**item_find_clause)
+        validator.validate(item_find_clause, item)
+        return self
+
+    def _assert_find(self, **item_find_clause):
+        item, soup = self._find(**item_find_clause)
+        assert item, 'Item [{}] not found in [{}]'.format(item_find_clause, soup)
+        return item
+
+    def _find(self, **item_find_clause):
+        soup = BeautifulSoup(self.response.data, features='html.parser')
+        item = soup.find(**item_find_clause)
+        return item, soup
 
     def follow_redirect(self):
         self.responds(302)
@@ -134,7 +206,3 @@ class FlaskClientSetup(object):
 
     def on(self, base_url: str):
         return FlaskClientValidatorFactory(self.client, base_url)
-
-
-def with_client(app: Flask):
-    return FlaskClientSetup(app.test_client())
