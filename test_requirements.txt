@@ -2,4 +2,3 @@ pytest
 pytest-cov
 beautifulsoup4
 requests_mock
-bunch
