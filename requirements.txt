@@ -11,3 +11,5 @@ pyscss
 werkzeug
 pyopenssl
 gunicorn
+pyjwt
+decorator

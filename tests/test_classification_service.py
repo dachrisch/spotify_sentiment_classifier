@@ -31,3 +31,6 @@ class SpotifyMoodClassificationServiceTest(unittest.TestCase):
         for sentiment in Sentiment:
             playlist_manager.add_tracks_to_playlist(('2p9RbgJwcuxasdMrQBdDDA3p',), sentiment)
         self.assertTrue(SpotifyMoodClassificationService(test_connector).is_analysed())
+
+    def test_enum_from_value(self):
+        self.assertEqual(Sentiment.DENIAL, Sentiment(3))

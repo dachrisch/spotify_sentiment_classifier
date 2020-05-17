@@ -1,6 +1,6 @@
 import logging
 
-from flask import render_template, request, url_for, flash, session
+from flask import render_template, request, url_for, flash, session, current_app, g
 from flask_classful import FlaskView
 from flask_dance.contrib.spotify import spotify
 from flask_wtf import FlaskForm
@@ -11,18 +11,25 @@ from sentiment.classify.sentiment import Sentiment
 from sentiment.spotify.service import SpotifyAuthenticationService, UserHasNoTracksException
 
 
-class SpotifyServiceMixin(object):
-    _auth_service = SpotifyAuthenticationService()
+class AppContextAttributesMixin(object):
+    def _get_or_create_and_store(self, property, default):
+        if not property in g:
+            setattr(g, property, default)
+        return getattr(g, property)
+
+
+class SpotifyServiceMixin(AppContextAttributesMixin):
 
     def before_request(self, name):
-        self.auth_service.catch_authentication(spotify)
+        self.auth_service.configure_token(current_app.config.get('SECRET_KEY'))
+        self.auth_service.catch_authentication_from_web(spotify)
 
     def _valid_login(self):
         return self.auth_service.is_token_valid()
 
     @property
     def auth_service(self) -> SpotifyAuthenticationService:
-        return SpotifyServiceMixin._auth_service
+        return self._get_or_create_and_store('auth_service', SpotifyAuthenticationService())
 
 
 class HomeView(FlaskView, SpotifyServiceMixin):
@@ -83,7 +90,7 @@ class MoodPlayerView(FlaskView, SpotifyServiceMixin):
         form = SentimentForm(request.form)
         return render_template('player.html', form=form, is_loggedin=self._valid_login(),
                                is_analysed=(self._is_analysed()), username=self._username_if_logged_in(),
-                               playlist_id=(self._playlist_id_from_form(form)))
+                               playlist_id=(self._playlist_id_from_form(form)), auth_token=self.auth_service.auth_token)
 
     def _username_if_logged_in(self):
         return self._valid_login() and self.auth_service.service_instance.username()
