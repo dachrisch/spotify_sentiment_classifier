@@ -18,7 +18,7 @@ class TestSentimentAnalyseApi(unittest.TestCase, TestClientMixin):
         self._auth_service.authorized = True
 
         response = self.test_client.get('/api/sentiment/playlist',
-                                        json={'auth_token': self._auth_service.auth_token,
+                                        data={'auth_token': self._auth_service.auth_token,
                                               'sentiment': Sentiment.ANGER.name},
                                         follow_redirects=False)
         self.assertEqual(200, response.status_code, response)
