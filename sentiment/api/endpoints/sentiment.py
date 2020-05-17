@@ -31,4 +31,4 @@ class Playlist(Resource, AppContextAttributesMixin):
         self.auth_service.catch_authentification_from_auth_token(args.auth_token)
 
         return self.auth_service.service_instance.playlist_manager.playlist_for_sentiment(
-            Sentiment.__getitem__(args.sentiment))
+            Sentiment(int(args.sentiment)))

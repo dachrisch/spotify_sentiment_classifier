@@ -113,13 +113,13 @@ class SpotifyAuthenticationService(object):
         auth_token = None
         if self.is_token_valid():
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5),
                 'iat': datetime.datetime.utcnow(),
                 'sub': self.token
             }
             auth_token = jwt.encode(payload,
                                     self.secret_key,
-                                    algorithm='HS256')
+                                    algorithm='HS256').decode("utf-8")
         return auth_token
 
     def configure_token(self, secret_key):

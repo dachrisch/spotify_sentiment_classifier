@@ -1,7 +1,6 @@
 import unittest
 
 from sentiment.api.endpoints.sentiment import Playlist
-from sentiment.classify.sentiment import Sentiment
 from tests.web_testing_base import TestClientMixin
 
 
@@ -19,10 +18,10 @@ class TestSentimentAnalyseApi(unittest.TestCase, TestClientMixin):
 
         response = self.test_client.get('/api/sentiment/playlist',
                                         data={'auth_token': self._auth_service.auth_token,
-                                              'sentiment': Sentiment.ANGER.name},
+                                              'sentiment': 1},
                                         follow_redirects=False)
         self.assertEqual(200, response.status_code, response)
-        self.assertIn(b'"name": "gm_mood_2"', response.data)
+        self.assertIn(b'"name": "gm_mood_1"', response.data)
 
 
 if __name__ == '__main__':
