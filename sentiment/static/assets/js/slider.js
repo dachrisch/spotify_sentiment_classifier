@@ -1,3 +1,9 @@
+$.ajaxSetup({
+    beforeSend: function(xhr) {
+        xhr.setRequestHeader('Authorization', 'Bearer ' + $('#auth_token').val());
+    }
+});
+
 $(function() {
   $('#slider')
     .slider({
@@ -13,13 +19,8 @@ $(function() {
     },
 
     stop: function( event, ui ) {
-          var token = $('#auth_token').val()
           $.ajax({
-                url: '/api/sentiment/playlist',
-                data: {
-                    'sentiment': ui.value,
-                    'auth_token': token
-                },
+                url: '/api/sentiment/' +  ui.value + '/playlist',
                 cache: true,
                 type: 'GET',
                 success: function(response) {
