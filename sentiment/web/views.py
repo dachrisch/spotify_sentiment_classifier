@@ -1,6 +1,6 @@
 import logging
 
-from flask import render_template, request, url_for, flash, session, current_app, g
+from flask import render_template, request, url_for, flash, session, g
 from flask_classful import FlaskView
 from flask_dance.contrib.spotify import spotify
 from flask_wtf import FlaskForm
@@ -8,45 +8,36 @@ from werkzeug.utils import redirect
 from wtforms import SubmitField
 
 from sentiment.classify.sentiment import Sentiment
-from sentiment.spotify.service import SpotifyAuthenticationService, UserHasNoTracksException
+from sentiment.spotify.service import UserHasNoTracksException
+from sentiment.web.auth import SpotifyServiceMixin, BeforeRequestDispatcherMixin
 
 
-class AppContextAttributesMixin(object):
-    def _get_or_create_and_store(self, property, default):
-        if not property in g:
-            setattr(g, property, default)
-        return getattr(g, property)
+class DebugLogMixin(BeforeRequestDispatcherMixin):
+    def __init__(self):
+        super().__init__()
+        self._log = logging.getLogger(__name__)
+        self._before_request_funcs.append(self._debug_log)
+
+    def _debug_log(self, name):
+        self._log.debug('requesting [{}::{}]'.format(self.__class__.__name__, name))
+        self._log.debug('Session: {}'.format(session))
+        self._log.debug('App Context: {}'.format(g.__dict__))
+        self._log.debug('Spotify: {}'.format(spotify.__dict__))
 
 
-class SpotifyServiceMixin(AppContextAttributesMixin):
-
-    def before_request(self, name):
-        self.auth_service.configure_token(current_app.config.get('SECRET_KEY'))
-        self.auth_service.catch_authentication_from_web(spotify)
-
-    def _valid_login(self):
-        return self.auth_service.is_token_valid()
-
-    @property
-    def auth_service(self) -> SpotifyAuthenticationService:
-        return self._get_or_create_and_store('auth_service', SpotifyAuthenticationService())
-
-
-class HomeView(FlaskView, SpotifyServiceMixin):
+class HomeView(FlaskView, SpotifyServiceMixin, DebugLogMixin):
     route_base = '/'
 
     def __init__(self):
         super().__init__()
-        self.log = logging.getLogger(__name__)
 
     def index(self):
         if session.get('next_url'):
             return redirect(session.pop('next_url'))
-        self.log.debug('user is {}'.format(self._valid_login() and 'logged in' or 'not logged in'))
         return render_template('homepage.html')
 
 
-class LoginView(FlaskView):
+class LoginView(FlaskView, DebugLogMixin):
     route_base = '/login'
 
     def index(self):
@@ -54,38 +45,36 @@ class LoginView(FlaskView):
         return redirect(url_for('spotify.login'))
 
 
-class AnalyseView(FlaskView, SpotifyServiceMixin):
+class AnalyseView(FlaskView, SpotifyServiceMixin, DebugLogMixin):
     route_base = '/analyse'
 
     def __init__(self):
         super().__init__()
-        self.log = logging.getLogger(__name__)
 
     def post(self):
         if not self._valid_login():
-            self.log.debug('redirecting for authentication...')
+            self._log.debug('redirecting for authentication...')
             return redirect(url_for('LoginView:index', next=url_for('AnalyseView:post')))
         try:
             self.auth_service.service_instance.analyse()
             return redirect(url_for('MoodPlayerView:index'))
         except UserHasNoTracksException as e:
-            self.log.exception(e)
+            self._log.exception(e)
             flash("Analyse failed! You don't have any saved tracks.", 'error')
             return redirect(url_for('MoodPlayerView:index'))
 
 
-class MoodPlayerView(FlaskView, SpotifyServiceMixin):
+class MoodPlayerView(FlaskView, SpotifyServiceMixin, DebugLogMixin):
     route_base = '/player'
 
     def __init__(self):
         super().__init__()
-        self.log = logging.getLogger(__name__)
 
     def index(self):
         return self.post()
 
     def post(self):
-        self.log.debug(
+        self._log.debug(
             'library is {}'.format(self._is_analysed() and 'analysed' or 'not analysed'))
         form = SentimentForm(request.form)
         return render_template('player.html', form=form, is_loggedin=self._valid_login(),

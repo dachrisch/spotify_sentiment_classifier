@@ -6,7 +6,7 @@ from flask_restx import Resource
 from sentiment.api.restplus import api
 from sentiment.classify.sentiment import Sentiment
 from sentiment.spotify.service import SpotifyAuthenticationService
-from sentiment.web.views import AppContextAttributesMixin
+from sentiment.web.auth import AppContextAttributesMixin
 
 ns = api.namespace('sentiment', description='Sentiment Operations for Spotify')
 
