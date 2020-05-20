@@ -1,1 +1,1 @@
-web: gunicorn "app:run_gunicorn()"
+web: waitress-serve --port=$PORT --call "app:run_waitress"

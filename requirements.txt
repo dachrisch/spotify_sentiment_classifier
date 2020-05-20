@@ -10,7 +10,7 @@ flask_assets
 pyscss
 werkzeug
 pyopenssl
-gunicorn
+waitress
 pyjwt
 decorator
 bunch
