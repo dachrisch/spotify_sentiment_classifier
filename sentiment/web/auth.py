@@ -17,7 +17,7 @@ class BeforeRequestDispatcherMixin(object):
 
 class AppContextAttributesMixin(object):
     def _get_or_create_and_store(self, property, default):
-        if not property in g:
+        if property not in g:
             setattr(g, property, default)
         return getattr(g, property)
 
