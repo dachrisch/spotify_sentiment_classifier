@@ -9,7 +9,12 @@ from webassets import Bundle
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from sentiment.api.restplus import api
-from sentiment.web.views import HomeView, AnalyseView, MoodPlayerView, LoginView, SliderView, ConfigView
+from sentiment.web.views.analyse import AnalyseView
+from sentiment.web.views.home import HomeView
+from sentiment.web.views.login import LoginView
+from sentiment.web.views.player import MoodPlayerView
+from sentiment.web.views.sentiment_config import ConfigView
+from sentiment.web.views.slider import SliderView
 
 
 def create_app():
