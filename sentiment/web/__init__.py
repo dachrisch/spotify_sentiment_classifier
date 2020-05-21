@@ -9,7 +9,7 @@ from webassets import Bundle
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from sentiment.api.restplus import api
-from sentiment.web.views import HomeView, AnalyseView, MoodPlayerView, LoginView, SliderView
+from sentiment.web.views import HomeView, AnalyseView, MoodPlayerView, LoginView, SliderView, ConfigView
 
 
 def create_app():
@@ -85,6 +85,7 @@ def add_views(flask_app):
     MoodPlayerView.register(flask_app)
     LoginView.register(flask_app)
     SliderView.register(flask_app)
+    ConfigView.register(flask_app)
 
 
 def app_api(flask_app):
