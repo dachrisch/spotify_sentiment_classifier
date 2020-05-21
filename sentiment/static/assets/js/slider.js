@@ -49,4 +49,20 @@ function removeClass(){
 }
 
 
-  
+$(function () {
+    $("#slider-range").slider({
+        range: true,
+        min: 0,
+        max: 1,
+        step: 0.01,
+        values: [0,1],
+        slide: function (event, ui) {
+            var min = ui.values[0];
+            var max = ui.values[1];
+            $("#slider-range").find(".ui-slider-handle:first").text(min);
+            $("#slider-range").find(".ui-slider-handle:last").text(max);
+            $("[name=min]").val(min);
+            $("[name=max]").val(max);
+        }
+    });
+});

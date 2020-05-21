@@ -1,5 +1,5 @@
 from flask import url_for, render_template
-from flask_classful import FlaskView
+from flask_classful import FlaskView, route
 from flask_table import Table, Col
 from werkzeug.utils import redirect
 
@@ -15,7 +15,7 @@ class SongsTable(Table):
 
 
 class ConfigView(FlaskView, SpotifyServiceMixin, DebugLogMixin):
-    route = '/config'
+    route_base = '/config'
 
     def index(self):
         if not self._valid_login():
@@ -33,6 +33,10 @@ class ConfigView(FlaskView, SpotifyServiceMixin, DebugLogMixin):
                 'items']
             sentiment_tables[sentiment.name] = self._to_table(tracks)
         return render_template('config.html', table=songs_table, sentiment_tables=sentiment_tables)
+
+    @route('sentiment')
+    def sentiment(self):
+        return render_template('sentiment_config.html')
 
     def _to_table(self, tracks):
         songs_table = SongsTable([])
