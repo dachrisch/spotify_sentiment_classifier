@@ -48,21 +48,25 @@ function removeClass(){
   $('.face-wrapper').children().removeAttr('class');
 }
 
-
-$(function () {
-    $("#slider-range").slider({
+var ranges = {
         range: true,
         min: 0,
         max: 1,
         step: 0.01,
-        values: [0,1],
-        slide: function (event, ui) {
-            var min = ui.values[0];
-            var max = ui.values[1];
-            $("#slider-range").find(".ui-slider-handle:first").text(min);
-            $("#slider-range").find(".ui-slider-handle:last").text(max);
-            $("[name=min]").val(min);
-            $("[name=max]").val(max);
+        values: [0,1]
         }
-    });
+
+function slide_handler(handle) {
+    function on_slide(event, ui) {
+        var min = ui.values[0];
+        var max = ui.values[1];
+        $(handle).find(".ui-slider-handle:first").text(min);
+        $(handle).find(".ui-slider-handle:last").text(max);
+    };
+    return on_slide
+}
+
+$(function () {
+    $('#slider-range1').slider(ranges).on('slide', slide_handler('#slider-range1'));
+    $('#slider-range2').slider(ranges).on('slide', slide_handler('#slider-range2'));
 });
