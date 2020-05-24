@@ -36,7 +36,7 @@ class ConfigView(FlaskView, SpotifyServiceMixin, DebugLogMixin):
 
     @route('sentiment')
     def sentiment(self):
-        return render_template('sentiment_config.html')
+        return render_template('sentiment_config.html', sentiments=Sentiment, classifiers=('valence',))
 
     def _to_table(self, tracks):
         songs_table = SongsTable([])

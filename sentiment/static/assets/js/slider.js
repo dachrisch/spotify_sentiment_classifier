@@ -58,15 +58,15 @@ var ranges = {
 
 function slide_handler(handle) {
     function on_slide(event, ui) {
-        var min = ui.values[0];
-        var max = ui.values[1];
-        $(handle).find(".ui-slider-handle:first").text(min);
-        $(handle).find(".ui-slider-handle:last").text(max);
+        $(ui.handle).text(ui.values[ui.handleIndex]);
     };
     return on_slide
 }
 
+function sentiment_slider(handle) {
+    $(handle).slider(ranges).on('slide', slide_handler(handle));
+}
+
 $(function () {
-    $('#slider-range1').slider(ranges).on('slide', slide_handler('#slider-range1'));
-    $('#slider-range2').slider(ranges).on('slide', slide_handler('#slider-range2'));
+    sentiment_slider('.slider-range')
 });
