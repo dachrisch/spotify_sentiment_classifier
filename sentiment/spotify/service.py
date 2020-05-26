@@ -86,7 +86,7 @@ class SpotifyAuthenticationService(object):
     @property
     def service_instance(self) -> SpotifyMoodClassificationService:
         if not self.is_token_valid():
-            TokenNotValidException(self.token)
+            raise TokenNotValidException(self.token)
         return SpotifyMoodClassificationService(SpotipyConnectionWrapper.from_token(self.token['access_token']))
 
     def catch_authentication_from_web(self, spotify_authentication: spotify):
