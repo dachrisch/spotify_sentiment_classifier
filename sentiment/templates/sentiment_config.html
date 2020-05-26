@@ -12,16 +12,17 @@
     <div class="inner">
         <!-- Boxes -->
         <div class="thumbnails">
+            {% for sentiment in sentiments %}
             <div class="box">
-                {% for sentiment in sentiments %}
                 <h2>{{ sentiment.name }}</h2>
                 <div class="ui-field-contain">
                     {% for classifier in classifiers %}
+                    <h4>{{ classifier }}</h4>
                     <div class="slider-range" id="{{ sentiment.name }}_{{ classifier }}"></div>
                     {% endfor %}
                 </div>
-                {% endfor %}
             </div>
+            {% endfor %}
         </div>
     </div>
 </main>
