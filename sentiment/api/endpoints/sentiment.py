@@ -30,8 +30,8 @@ class SentimentPlaylist(Resource, AppContextAttributesMixin):
             raise UnauthenticatedException()
 
         auth_token = auth_header[len('Bearer '):]
-        self.auth_service.configure_token(current_app.config['SECRET_KEY'])
-        self.auth_service.catch_authentification_from_auth_token(auth_token)
+        self.auth_service.configure_secret_key(current_app.config['SECRET_KEY'])
+        self.auth_service.catch_authentication_from_auth_token(auth_token)
 
         return self.auth_service.service_instance.playlist_manager.playlist_for_sentiment(
             Sentiment(sentiment_id))

@@ -12,18 +12,20 @@ class TestSentimentApi(unittest.TestCase, TestClientMixin):
         SentimentPlaylist._auth_service = self._auth_service
 
     def test_playlist_from_valid_authentication(self):
-        self._auth_service.configure_token(self.test_app.config['SECRET_KEY'])
+        self._auth_service.configure_secret_key(self.test_app.config['SECRET_KEY'])
         self._auth_service.token = {'access_token': 'fake-token', 'expires_in': 1}
         self._auth_service.authorized = True
+        auth_token = self._auth_service.auth_token
 
+        self._auth_service.authorized = False
         response = self.test_client.get('/api/sentiment/1/playlist',
-                                        headers=dict(Authorization='Bearer {}'.format(self._auth_service.auth_token)),
+                                        headers=dict(Authorization='Bearer {}'.format(auth_token)),
                                         follow_redirects=False)
         self.assertEqual(200, response.status_code, response)
         self.assertIn(b'"name": "gm_mood_1"', response.data)
 
     def test_invalid_sentiment(self):
-        self._auth_service.configure_token(self.test_app.config['SECRET_KEY'])
+        self._auth_service.configure_secret_key(self.test_app.config['SECRET_KEY'])
         self._auth_service.token = {'access_token': 'fake-token', 'expires_in': 1}
         self._auth_service.authorized = True
 

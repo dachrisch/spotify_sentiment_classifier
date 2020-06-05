@@ -28,7 +28,7 @@ class SpotifyServiceMixin(AppContextAttributesMixin, BeforeRequestDispatcherMixi
         self._before_request_funcs.append(self._catch_auth)
 
     def _catch_auth(self, name):
-        self.auth_service.configure_token(current_app.config.get('SECRET_KEY'))
+        self.auth_service.configure_secret_key(current_app.config.get('SECRET_KEY'))
         self.auth_service.catch_authentication_from_web(spotify)
 
     def _valid_login(self):

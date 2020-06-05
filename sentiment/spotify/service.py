@@ -80,12 +80,13 @@ class SpotifyAuthenticationService(object):
         self.authorized = spotify_authentication.authorized
         self.token = spotify_authentication.token
 
-    def catch_authentification_from_auth_token(self, auth_token):
+    def catch_authentication_from_auth_token(self, auth_token):
         if not self.secret_key:
-            raise Exception('Secret key not configured. Have you called [{}]?'.format(self.configure_token))
+            raise Exception('Secret key not configured. Have you called [{}]?'.format(self.configure_secret_key))
         payload = jwt.decode(auth_token, self.secret_key, algorithms=('HS256',))
         if payload and 'sub' in payload:
             self.token = payload['sub']
+            self.authorized = self.token['expires_in'] > 0
 
     def is_token_valid(self):
         if self.token and 'expires_in' in self.token:
@@ -96,7 +97,7 @@ class SpotifyAuthenticationService(object):
     @property
     def auth_token(self):
         if not self.secret_key:
-            raise Exception('Secret key not configured. Have you called [{}]?'.format(self.configure_token))
+            raise Exception('Secret key not configured. Have you called [{}]?'.format(self.configure_secret_key))
         auth_token = None
         if self.is_token_valid():
             payload = {
@@ -109,5 +110,5 @@ class SpotifyAuthenticationService(object):
                                     algorithm='HS256').decode("utf-8")
         return auth_token
 
-    def configure_token(self, secret_key):
+    def configure_secret_key(self, secret_key):
         self.secret_key = secret_key
