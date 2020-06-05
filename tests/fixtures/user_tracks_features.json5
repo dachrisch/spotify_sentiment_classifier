@@ -54,7 +54,7 @@
     "acousticness": null,
     "instrumentalness": null,
     "liveness": null,
-    "valence": 1,
+    "valence": 0.99,
     "tempo": null,
     "type": "audio_features",
     "id": "5AIYDx0HUjra5Bn0vZtjmd"

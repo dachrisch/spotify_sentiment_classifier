@@ -4,7 +4,7 @@ import logging
 import jwt
 from flask_dance.contrib.spotify import spotify
 
-from sentiment.classify.classify import FeatureClassifier
+from sentiment.classify.classify import FeatureClassifier, Classification
 from sentiment.classify.sentiment import Sentiment
 from sentiment.spotify.connector import SpotipyConnectionWrapper
 from sentiment.spotify.playlist import PlaylistManager
@@ -48,7 +48,8 @@ class SpotifyMoodClassificationService(object):
         return self.spotify_connector.current_user()['display_name']
 
     def _filter_sentiment(self, sentiment, tracks_with_features):
-        return tuple(filter(lambda x: FeatureClassifier.classify(x) == sentiment, tracks_with_features))
+        return tuple(
+            filter(lambda x: FeatureClassifier().classify(x) == Classification(sentiment), tracks_with_features))
 
     def _all_tracks_audio_features(self, all_tracks):
         all_tracks_features = self.spotify_connector.audio_features(self._only_ids(all_tracks))
@@ -61,20 +62,6 @@ class SpotifyMoodClassificationService(object):
         user_saved_tracks = self.spotify_connector.current_user_saved_tracks()
         self.log.debug('user has the following saved tracks: [{}]'.format(user_saved_tracks))
         return tuple(map(lambda x: x['track'], user_saved_tracks['items']))
-
-
-class NoopSpotifyMoodClassificationService(SpotifyMoodClassificationService):
-    def __init__(self):
-        super().__init__(None)
-
-    def analyse(self):
-        raise NotImplementedError()
-
-    def is_analysed(self):
-        return False
-
-    def username(self):
-        raise NotImplementedError
 
 
 class SpotifyAuthenticationService(object):
