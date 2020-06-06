@@ -114,7 +114,16 @@ class RuleHandlerBuilder(object):
     @classmethod
     def default(cls) -> RuleHandler:
         builder = RuleHandlerBuilder()
-        builder.when('valence', 0, .2).then(Sentiment.DEPRESSION)
+        builder.when('valence', 0, .2).when('danceability', 0, 1). \
+            when('energy', 0, 1). \
+            when('key', 0, 1). \
+            when('loudness', 0, 1). \
+            when('mode', 0, 1). \
+            when('speechiness', 0, 1). \
+            when('acousticness', 0, 1). \
+            when('instrumentalness', 0, 1). \
+            when('liveness', 0, 1). \
+            when('tempo', 0, 1).then(Sentiment.DEPRESSION)
         builder.when('valence', 0.2, .4).then(Sentiment.ANGER)
         builder.when('valence', 0.4, .5).then(Sentiment.DENIAL)
         builder.when('valence', 0.5, .6).then(Sentiment.BARGAINING)

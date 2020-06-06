@@ -54,7 +54,8 @@ function sentiment_slider(handle) {
         min: 0,
         max: 1,
         step: 0.01,
-        values: [$(handle).data('lower'),$(handle).data('upper')]
+        values: [$(handle).data('lower'),$(handle).data('upper')],
+        orientation: 'horizontal'
     }).slider('float');
     console.log($(handle).data('lower'))
 }
