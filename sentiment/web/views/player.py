@@ -1,11 +1,16 @@
-from flask import request, render_template
+from typing import List
+
+from flask import render_template
 from flask_classful import FlaskView
-from flask_wtf import FlaskForm
-from wtforms import SubmitField
 
 from sentiment.classify.sentiment import Sentiment
 from sentiment.web.auth import SpotifyServiceMixin
 from sentiment.web.base import DebugLogMixin
+
+
+class CategoryPlayer(object):
+    def __init__(self):
+        pass
 
 
 class MoodPlayerView(FlaskView, SpotifyServiceMixin, DebugLogMixin):
@@ -18,45 +23,27 @@ class MoodPlayerView(FlaskView, SpotifyServiceMixin, DebugLogMixin):
         return self.post()
 
     def post(self):
-        self._log.debug(
-            'library is {}'.format(self._is_analysed() and 'analysed' or 'not analysed'))
-        form = SentimentForm(request.form)
-        return render_template('player.html', form=form, is_loggedin=self._valid_login(),
-                               is_analysed=(self._is_analysed()), username=self._username_if_logged_in(),
-                               playlist_id=(self._playlist_id_from_form(form)), auth_token=self.auth_service.auth_token)
+        self._log.debug('library is {}'.format(self._is_analysed() and 'analysed' or 'not analysed'))
+        category_players: List[CategoryPlayer] = self.category_players()
+        return render_template('player.html', is_loggedin=self._valid_login(), is_analysed=(self._is_analysed()),
+                               username=self._username_if_logged_in(), auth_token=self.auth_service.auth_token,
+                               category_players=category_players)
+
+    def category_players(self):
+        if not self._is_analysed():
+            return
+        category_players = []
+        for sentiment in Sentiment:
+            category_player = CategoryPlayer()
+            category_player.name = sentiment
+            playlist = self.auth_service.service_instance.playlist_manager.playlist_for_sentiment(sentiment)
+            category_player.playlist_id = playlist['id']
+            category_player.cover_url = 'images' in playlist and playlist['images'][0]['url']
+            category_players.append(category_player)
+        return category_players
 
     def _username_if_logged_in(self):
         return self._valid_login() and self.auth_service.service_instance.username()
 
-    def _playlist_id_from_form(self, form: FlaskForm):
-        sentiment_name = None
-        if self._is_analysed() and form.is_submitted():
-            for name, value in form.data.items():
-                if value:
-                    sentiment_name = name
-                    break
-        playlist_id = None
-        if sentiment_name:
-            sentiment = Sentiment.__getitem__(sentiment_name)
-            playlist_id = self.auth_service.service_instance.playlist_manager.playlist_for_sentiment(sentiment)['id']
-        return playlist_id
-
     def _is_analysed(self):
         return self._valid_login() and self.auth_service.service_instance.is_analysed()
-
-
-def with_sentiment_buttons(cls):
-    for sentiment in Sentiment:
-        setattr(cls, sentiment.name, SubmitField(sentiment.name))
-    return cls
-
-
-@with_sentiment_buttons
-class SentimentForm(FlaskForm):
-
-    def __init__(self, form=None):
-        super(SentimentForm, self).__init__(form)
-
-    def sentiment_buttons(self):
-        for sentiment in Sentiment:
-            yield getattr(self, sentiment.name)

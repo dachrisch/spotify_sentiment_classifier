@@ -49,64 +49,18 @@
     <div class="inner">
         <!-- Boxes -->
         <div class="thumbnails">
-            <div class="box">
-                <div class="flex-item">
-                    <div class="mood-box">
-                        <div class="face-wrapper">
-                            <div class="case3" id="eyes">
-                                <div class="eyebrow left"></div>
-                                <div class="eye left">
-                                    <div class="eyelid"></div>
-                                </div>
-                                <div class="bottomlid left"></div>
-                                <div class="eyebrow right"></div>
-                                <div class="eye right">
-                                    <div class="eyelid"></div>
-                                </div>
-                                <div class="bottomlid right"></div>
-
-                            </div>
-                            <div class="case3" id="mouth">
-                                <div id="mouth-open"></div>
-                            </div>
-                            <div class="case3" id="face-bg">
-                                <div class="face-light"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            {% for category_player in category_players %}
+            <div class="box" id="player_{{category_player.name}}">
+                <h2>{{category_player.name}}</h2>
+                <span class="image fit"><img alt="" src="{{category_player.cover_url}}"/></span>
                 <div class="inner">
-                    <h4> How Are You Feeling Today?</h4>
-                    <div id="slider"></div>
-                    <input id="auth_token" type="hidden" value="{{ auth_token }}"/>
-                    <div class="inner" id="slider_spotify_player">
-                        <iframe allow="encrypted-media" allowtransparency="true" frameborder="0" height="80"
-                                width="300"></iframe>
-                    </div>
-                </div>
-            </div>
-            <div class="box" id="player">
-                <span class="image fit"><img alt="" src="/static/images/pic02.jpg"/></span>
-                <div class="inner">
-                    <h2>Enjoy your own music</h2>
-                    <form action="{{ url_for('MoodPlayerView:post', _anchor='player') }}" class="no-padding"
-                          id="sentiment_form"
-                          method="post">
-                        {{ form.csrf_token }}
-                        {% for button in form.sentiment_buttons() %}
-                        {{ button }}
-                        {% endfor %}
-                    </form>
-
-                    {% if playlist_id %}
                     <iframe allow="encrypted-media" allowtransparency="true" frameborder="0" height="80"
-                            id="spotify_player" src="https://open.spotify.com/embed/playlist/{{ playlist_id }}"
+                            id="spotify_player_{{category_player.name}}"
+                            src="https://open.spotify.com/embed/playlist/{{ category_player.playlist_id }}"
                             width="300"></iframe>
-                    {% endif %}
-
                 </div>
             </div>
-
+            {% endfor %}
         </div>
 
     </div>

@@ -35,23 +35,9 @@ class TestWebIntegration(TestCase, TestClientMixin, RequestsMockFixtureMixin):
         validate_that = validate_that.submit_button(in_form='analyse_form', id='btn_analyse').on_page(
             '/analyse/').follow_redirect().to('/player/')
 
-        validate_that = validate_that.submit_button(in_form='sentiment_form', id=Sentiment.ANGER.name).responds(
-            200).on_page('/player/')
         validate_that.has(ItemValidator.attr('src', 'https://open.spotify.com/embed/playlist/{}'.format(
             PlaylistManager(SpotipyConnectionWrapper(fixture)).playlist_for_sentiment(Sentiment.ANGER)['id']
-        )), id='spotify_player')
-
-    @requests_mock.Mocker()
-    def test_player_when_token_expired(self, mock):
-        self._setup_logged_in()
-
-        self._prepare_requests(mock)
-        validate_that = self._run_flow().on('https://localhost').validate_that().get('/player/')
-        validate_that = validate_that.responds(200)
-        self._setup_token_expired()
-        validate_that.submit_button(in_form='sentiment_form', id=Sentiment.ANGER.name).responds(
-            200).has(ItemValidator.attr('href', '/login/?next=%2Fplayer%2F'),
-                     id='spotify_login')
+        )), id='spotify_player_{}'.format(Sentiment.ANGER))
 
 
 if __name__ == '__main__':
