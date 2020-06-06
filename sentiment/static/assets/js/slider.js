@@ -65,3 +65,9 @@ $(function () {
         sentiment_slider(slider)
     })
 });
+
+$(document).ready(function () {
+    $('.edit-modal-opener').click(function () {
+        $('#Modal').modal();
+    });
+});

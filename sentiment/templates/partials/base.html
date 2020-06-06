@@ -6,6 +6,7 @@
 {% endblock metas %}
 {% block styles %}
 <link href='/static/css/jquery-ui.css' rel='stylesheet'>
+<link href="{{bootstrap_find_resource('css/bootstrap.css', cdn='bootstrap')}}" rel="stylesheet">
 <link href='/static/css/jquery-ui-slider-pips.css' rel='stylesheet'>
 <link href="/static/css/main.css" rel="stylesheet"/>
 <link href="/static/dist/css/style.min.css" rel="stylesheet" type="text/css"/>
@@ -34,6 +35,7 @@
 
 {% block scripts %}
 <script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
 <script src="/static/js/jquery.scrolly.min.js"></script>
 <script src="/static/js/skel.min.js"></script>
 <script src="/static/js/util.js"></script>
