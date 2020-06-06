@@ -52,8 +52,11 @@ class FieldRule(object):
         self.lower = lower
         self.upper = upper
 
+    def accept(self, request):
+        return self.field in request
+
     def validate(self, request):
-        return self.field in request and self.lower <= request[self.field] <= self.upper
+        return self.lower <= request[self.field] <= self.upper
 
     def __hash__(self):
         return hash(self.field)
@@ -79,7 +82,7 @@ class FeatureRuleHandler(RuleHandler):
         return self.classification
 
     def _accept(self, request: Any) -> bool:
-        return all(rule.validate(request) for rule in self.rules)
+        return all(rule.validate(request) for rule in filter(lambda rule: rule.accept(request), self.rules))
 
     def when(self, field_rule: FieldRule):
         self.rules.add(field_rule)

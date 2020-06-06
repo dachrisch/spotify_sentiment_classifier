@@ -3,7 +3,7 @@ import unittest
 from importlib import resources
 from logging import config
 
-from sentiment.classify.classify import FeatureClassifier, Classification, RuleHandlerBuilder
+from sentiment.classify.classify import FeatureClassifier, RuleHandlerBuilder
 from sentiment.classify.sentiment import Sentiment
 
 with resources.open_text('tests', 'tests_logging.json') as f:
@@ -48,8 +48,7 @@ class TestRulesHandler(unittest.TestCase):
         self.assertEqual(len(handlers), len(Sentiment))
         for handler, expected in zip(handlers, Sentiment):
             self.assertEqual(expected, handler.classification.name)
-            for rule in handler.rules:
-                self.assertEqual('valence', rule.field)
+            self.assertIn('valence', map(lambda rule: rule.field, handler.rules))
 
     def test_rules_handler_from_json(self):
         _json = {'handlers': [
@@ -74,7 +73,10 @@ class TestDefaultClassification(unittest.TestCase):
             Sentiment.ACCEPTANCE: .7,
         }
         for sentiment in Sentiment:
-            self.assertEqual(Classification(sentiment), FeatureClassifier().classify({'valence': fixture[sentiment]}))
+            classification = FeatureClassifier().classify({'valence': fixture[sentiment]})
+            self.assertIsNotNone(classification,
+                                 'could not classify sentiment {}: {}'.format(sentiment, fixture[sentiment]))
+            self.assertEqual(sentiment, classification.name)
 
 
 if __name__ == '__main__':
