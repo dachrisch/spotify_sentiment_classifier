@@ -14,4 +14,3 @@ pyOpenSSL==19.1.0
 waitress==1.4.3
 PyJWT==1.7.1
 decorator==4.4.2
-bunch==1.0.1

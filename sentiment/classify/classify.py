@@ -64,27 +64,51 @@ class FieldRule(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def __repr__(self):
+        return '{me}({lower}<={field}<={upper})'.format(me=self.__class__.__name__, lower=self.lower, upper=self.upper,
+                                                        field=self.field)
+
 
 class FeatureRuleHandler(RuleHandler):
     def __init__(self, classification: Classification):
         super().__init__()
         self.rules: Set[FieldRule] = set()
-        self.classification = classification
+        self.classification: Classification = classification
 
-    def _process(self, request):
+    def _process(self, request: Any) -> Classification:
         return self.classification
 
-    def _accept(self, request):
+    def _accept(self, request: Any) -> bool:
         return all(rule.validate(request) for rule in self.rules)
 
-    def when(self, field, lower, upper):
+    def when(self, field: str, lower: float, upper: float):
         self.rules.add(FieldRule(field, lower, upper))
         return self
 
+    def __iter__(self):
+        return RuleIterator(self)
 
-class DefaultRuleBuilder(object):
+    def __repr__(self):
+        return '{me}(classification={classification}, rules={rules})'.format(me=self.__class__.__name__,
+                                                                             classification=self.classification,
+                                                                             rules=self.rules)
+
+
+class RuleIterator(object):
+    def __init__(self, rule_handler: RuleHandler):
+        self.next = rule_handler
+
+    def __next__(self):
+        current = self.next
+        if not current:
+            raise StopIteration
+        self.next = current.next_handler
+        return current
+
+
+class DefaultHandlerBuilder(object):
     @classmethod
-    def build(cls):
+    def build(cls) -> FeatureRuleHandler:
         chain = FeatureRuleHandler(Classification(Sentiment.DEPRESSION))
         chain.when('valence', 0, .2). \
             set_next(FeatureRuleHandler(Classification(Sentiment.ANGER)).when('valence', 0.2, .4)). \
@@ -95,8 +119,23 @@ class DefaultRuleBuilder(object):
 
 
 class FeatureClassifier(object):
-    def __init__(self, rule_handler=DefaultRuleBuilder.build()):
+    def __init__(self, rule_handler=DefaultHandlerBuilder.build()):
         self.rule_handler = rule_handler
 
     def classify(self, track_feature):
         return self.rule_handler.handle(track_feature)
+
+    @classmethod
+    def from_json(cls, json):
+        chain = None
+        _next = None
+        for handler in json['handlers']:
+            _next = FeatureRuleHandler(Classification(handler['classification']['name']))
+            if chain:
+                chain.set_next(_next)
+            else:
+                chain = _next
+            for rule in handler['rules']:
+                _next.when(rule['field'], float(rule['lower']), float(rule['upper']))
+            _next = chain
+        return cls(chain)
