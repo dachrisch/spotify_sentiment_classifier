@@ -3,7 +3,7 @@ from flask_classful import FlaskView, route
 from flask_table import Table, Col
 from werkzeug.utils import redirect
 
-from sentiment.classify.classify import DefaultHandlerBuilder
+from sentiment.classify.classify import RuleHandlerBuilder
 from sentiment.classify.sentiment import Sentiment
 from sentiment.web.auth import SpotifyServiceMixin
 from sentiment.web.base import DebugLogMixin
@@ -37,7 +37,7 @@ class ConfigView(FlaskView, SpotifyServiceMixin, DebugLogMixin):
 
     @route('sentiment')
     def sentiment(self):
-        return render_template('sentiment_config.html', handlers=list(DefaultHandlerBuilder.build()))
+        return render_template('sentiment_config.html', handlers=list(RuleHandlerBuilder.default()))
 
     def _to_table(self, tracks):
         songs_table = SongsTable([])

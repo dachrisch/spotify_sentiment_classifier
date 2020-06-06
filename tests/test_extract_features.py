@@ -3,7 +3,7 @@ import unittest
 from importlib import resources
 from logging import config
 
-from sentiment.classify.classify import FeatureClassifier, Classification, FeatureRuleHandler, DefaultHandlerBuilder
+from sentiment.classify.classify import FeatureClassifier, Classification, RuleHandlerBuilder
 from sentiment.classify.sentiment import Sentiment
 
 with resources.open_text('tests', 'tests_logging.json') as f:
@@ -13,35 +13,38 @@ with resources.open_text('tests', 'tests_logging.json') as f:
 class ExtractFeaturesTest(unittest.TestCase):
 
     def test_classify_single_rule(self):
-        expected = Classification(Sentiment.BARGAINING)
-        feature_rule_handler = FeatureRuleHandler(expected).when('valence', .1, .2).when('danciness', 0, .4)
+        expected = Sentiment.BARGAINING
+        feature_rule_handler = RuleHandlerBuilder().when('valence', .1, .2).when('danciness', 0, .4).then(
+            expected).build()
         feature_classifier = FeatureClassifier(feature_rule_handler)
-        self.assertEqual(expected, feature_classifier.classify({'valence': 0.15, 'danciness': 0.3}))
+        self.assertEqual(expected, feature_classifier.classify({'valence': 0.15, 'danciness': 0.3}).name)
 
     def test_classify_distinct_rules(self):
-        expected = Classification(Sentiment.ANGER)
-        feature_rule_handler = FeatureRuleHandler(Classification(Sentiment.BARGAINING)).when('valence', .1, .2).when(
-            'danciness', 0, .4)
-        feature_rule_handler.set_next(FeatureRuleHandler(expected).when('valence', .2, .3).when('danciness', .4, .6))
+        expected = Sentiment.ANGER
+        feature_rule_handler = RuleHandlerBuilder().when('valence', .1, .2).when(
+            'danciness', 0, .4).then(Sentiment.BARGAINING).build()
+        feature_rule_handler.set_next(
+            RuleHandlerBuilder().when('valence', .2, .3).when('danciness', .4, .6).then(expected).build())
         feature_classifier = FeatureClassifier(feature_rule_handler)
-        self.assertEqual(expected, feature_classifier.classify({'valence': 0.25, 'danciness': 0.41}))
+        self.assertEqual(expected, feature_classifier.classify({'valence': 0.25, 'danciness': 0.41}).name)
 
     def test_first_field_rule_used(self):
-        expected = Classification(Sentiment.BARGAINING)
-        feature_rule_handler = FeatureRuleHandler(expected).when('valence', .1, .2).when('valence', 0, .4)
+        expected = Sentiment.BARGAINING
+        feature_rule_handler = RuleHandlerBuilder().when('valence', .1, .2).when('valence', 0, .4).then(
+            expected).build()
         feature_classifier = FeatureClassifier(feature_rule_handler)
-        self.assertEqual(expected, feature_classifier.classify({'valence': 0.12}))
+        self.assertEqual(expected, feature_classifier.classify({'valence': 0.12}).name)
 
     def test_None_if_outside_of_rule(self):
-        expected = Classification(Sentiment.BARGAINING)
-        feature_rule_handler = FeatureRuleHandler(expected).when('valence', .1, .2)
+        expected = Sentiment.BARGAINING
+        feature_rule_handler = RuleHandlerBuilder().when('valence', .1, .2).then(expected).build()
         feature_classifier = FeatureClassifier(feature_rule_handler)
         self.assertIsNone(feature_classifier.classify({'valence': 0.5}))
 
 
 class TestRulesHandler(unittest.TestCase):
     def test_iterate_handler(self):
-        handlers = list(DefaultHandlerBuilder.build())
+        handlers = list(RuleHandlerBuilder.default())
         self.assertEqual(len(handlers), len(Sentiment))
         for handler, expected in zip(handlers, Sentiment):
             self.assertEqual(expected, handler.classification.name)

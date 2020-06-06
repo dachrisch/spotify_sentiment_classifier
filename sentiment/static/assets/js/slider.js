@@ -48,13 +48,6 @@ function removeClass(){
   $('.face-wrapper').children().removeAttr('class');
 }
 
-function slide_handler(handle) {
-    function on_slide(event, ui) {
-        $(ui.handle).text(ui.values[ui.handleIndex]);
-    };
-    return on_slide
-}
-
 function sentiment_slider(handle) {
     $(handle).slider({
         range: true,
@@ -62,13 +55,12 @@ function sentiment_slider(handle) {
         max: 1,
         step: 0.01,
         values: [$(handle).data('lower'),$(handle).data('upper')]
-    }).on('slide', slide_handler(handle));
+    }).slider('float');
     console.log($(handle).data('lower'))
 }
 
 $(function () {
     $('.slider-range').each(function(i ,slider) {
         sentiment_slider(slider)
-    }
-    )
+    })
 });
