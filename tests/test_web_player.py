@@ -73,20 +73,11 @@ class TestWebPlayer(TestCase, TestClientMixin):
 
         self.assertEqual(200, response.status_code)
         soup = BeautifulSoup(response.data, features='html.parser')
-        spotify_player = soup.find(id='spotify_player')
+        spotify_player = soup.find(id='spotify_player_{}'.format(Sentiment.ANGER))
         expected_id = self._auth_service.service_instance.playlist_manager.playlist_for_sentiment(Sentiment.ANGER)[
             'id']
         self.assertIsNotNone(spotify_player)
         self.assertEqual('https://open.spotify.com/embed/playlist/{}'.format(expected_id), spotify_player.attrs['src'])
-
-    def test_no_player_when_no_playlist_on_homepage(self):
-        self._setup_account_as_analysed()
-        response = self.test_client.get('/player/', follow_redirects=False)
-        self.assertEqual(200, response.status_code)
-        soup = BeautifulSoup(response.data, features='html.parser')
-        spotify_player = soup.find(id='spotify_player')
-
-        self.assertIsNone(spotify_player)
 
     def test_error_message(self):
         # setup error

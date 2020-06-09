@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href='/static/css/jquery-ui.css' rel='stylesheet'>
+    <link href='/static/css/jquery-ui-slider-pips.css' rel='stylesheet'>
+    <link href="/static/css/main.css" rel="stylesheet"/>
+
+</head>
+<body>
+<main id="main">
+    <div class="inner">
+        <!-- Boxes -->
+        <div class="thumbnails">
+            {% for handler in handlers %}
+            <div class="box">
+                <h2>{{ handler.classification.name }}</h2>
+                <div class="ui-field-contain">
+                    {% for rule in handler.rules %}
+                    <h4>{{ rule }}</h4>
+                    <div class="slider-range" data-lower="{{rule.lower}}" data-upper="{{rule.upper}}"
+                         id="{{ handler.classification.name }}_{{ rule.field }}"></div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+<script src="/static/js/jquery.min.js"></script>
+<script src='/static/js/jquery-ui.min.js'></script>
+<script src='/static/js/jquery-ui-slider-pips.min.js'></script>
+<script src="/static/dist/js/custom.min.js"></script>
+</body>
+</html>

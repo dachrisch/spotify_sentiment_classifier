@@ -4,7 +4,7 @@ import logging
 import jwt
 from flask_dance.contrib.spotify import spotify
 
-from sentiment.classify.classify import FeatureClassifier
+from sentiment.classify.classify import FeatureClassifier, Classification
 from sentiment.classify.sentiment import Sentiment
 from sentiment.spotify.connector import SpotipyConnectionWrapper
 from sentiment.spotify.playlist import PlaylistManager
@@ -48,7 +48,8 @@ class SpotifyMoodClassificationService(object):
         return self.spotify_connector.current_user()['display_name']
 
     def _filter_sentiment(self, sentiment, tracks_with_features):
-        return tuple(filter(lambda x: FeatureClassifier.classify(x) == sentiment, tracks_with_features))
+        return tuple(
+            filter(lambda x: FeatureClassifier().classify(x) == Classification(sentiment), tracks_with_features))
 
     def _all_tracks_audio_features(self, all_tracks):
         all_tracks_features = self.spotify_connector.audio_features(self._only_ids(all_tracks))
@@ -63,20 +64,6 @@ class SpotifyMoodClassificationService(object):
         return tuple(map(lambda x: x['track'], user_saved_tracks['items']))
 
 
-class NoopSpotifyMoodClassificationService(SpotifyMoodClassificationService):
-    def __init__(self):
-        super().__init__(None)
-
-    def analyse(self):
-        raise NotImplementedError()
-
-    def is_analysed(self):
-        return False
-
-    def username(self):
-        raise NotImplementedError
-
-
 class SpotifyAuthenticationService(object):
     def __init__(self):
         self.authorized = False
@@ -86,19 +73,20 @@ class SpotifyAuthenticationService(object):
     @property
     def service_instance(self) -> SpotifyMoodClassificationService:
         if not self.is_token_valid():
-            TokenNotValidException(self.token)
+            raise TokenNotValidException(self.token)
         return SpotifyMoodClassificationService(SpotipyConnectionWrapper.from_token(self.token['access_token']))
 
     def catch_authentication_from_web(self, spotify_authentication: spotify):
         self.authorized = spotify_authentication.authorized
         self.token = spotify_authentication.token
 
-    def catch_authentification_from_auth_token(self, auth_token):
+    def catch_authentication_from_auth_token(self, auth_token):
         if not self.secret_key:
-            raise Exception('Secret key not configured. Have you called [{}]?'.format(self.configure_token))
+            raise Exception('Secret key not configured. Have you called [{}]?'.format(self.configure_secret_key))
         payload = jwt.decode(auth_token, self.secret_key, algorithms=('HS256',))
         if payload and 'sub' in payload:
             self.token = payload['sub']
+            self.authorized = self.token['expires_in'] > 0
 
     def is_token_valid(self):
         if self.token and 'expires_in' in self.token:
@@ -109,7 +97,7 @@ class SpotifyAuthenticationService(object):
     @property
     def auth_token(self):
         if not self.secret_key:
-            raise Exception('Secret key not configured. Have you called [{}]?'.format(self.configure_token))
+            raise Exception('Secret key not configured. Have you called [{}]?'.format(self.configure_secret_key))
         auth_token = None
         if self.is_token_valid():
             payload = {
@@ -122,5 +110,5 @@ class SpotifyAuthenticationService(object):
                                     algorithm='HS256').decode("utf-8")
         return auth_token
 
-    def configure_token(self, secret_key):
+    def configure_secret_key(self, secret_key):
         self.secret_key = secret_key

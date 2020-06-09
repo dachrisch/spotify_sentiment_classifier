@@ -4,7 +4,6 @@ from flask import current_app, request
 from flask_restx import Resource
 
 from sentiment.api.restplus import api
-from sentiment.classify.sentiment import Sentiment
 from sentiment.spotify.service import SpotifyAuthenticationService
 from sentiment.web.auth import AppContextAttributesMixin
 
@@ -16,7 +15,7 @@ class UnauthenticatedException(Exception):
         super(UnauthenticatedException, self).__init__('Please provide Bearer Authentication')
 
 
-@ns.route('/<int:sentiment_id>/playlist')
+@ns.route('/<string:sentiment_name>/config')
 class SentimentPlaylist(Resource, AppContextAttributesMixin):
     log = logging.getLogger(__name__)
 
@@ -24,14 +23,14 @@ class SentimentPlaylist(Resource, AppContextAttributesMixin):
     def auth_service(self) -> SpotifyAuthenticationService:
         return self._get_or_create_and_store('auth_service', SpotifyAuthenticationService())
 
-    def get(self, sentiment_id):
+    def get(self, sentiment_name):
         auth_header = request.headers.get('Authorization')
-        if not (auth_header and auth_header.startswith('Bearer ')):
+        if not (auth_header and auth_header.startswith('Bearer ') and not auth_header == 'Bearer undefined'):
             raise UnauthenticatedException()
 
         auth_token = auth_header[len('Bearer '):]
-        self.auth_service.configure_token(current_app.config['SECRET_KEY'])
-        self.auth_service.catch_authentification_from_auth_token(auth_token)
+        self.auth_service.configure_secret_key(current_app.config['SECRET_KEY'])
+        self.auth_service.catch_authentication_from_auth_token(auth_token)
 
-        return self.auth_service.service_instance.playlist_manager.playlist_for_sentiment(
-            Sentiment(sentiment_id))
+        return {'classification': {'name': sentiment_name},
+                'rules': [{'field': 'valence', 'lower': '.1', 'upper': '.2'}]}

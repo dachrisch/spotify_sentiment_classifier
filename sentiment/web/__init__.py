@@ -9,7 +9,12 @@ from webassets import Bundle
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from sentiment.api.restplus import api
-from sentiment.web.views import HomeView, AnalyseView, MoodPlayerView, LoginView, SliderView
+from sentiment.web.views.analyse import AnalyseView
+from sentiment.web.views.home import HomeView
+from sentiment.web.views.login import LoginView
+from sentiment.web.views.player import MoodPlayerView
+from sentiment.web.views.sentiment_config import ConfigView
+from sentiment.web.views.slider import SliderView
 
 
 def create_app():
@@ -35,12 +40,12 @@ def configure_assets(flask_app):
     assets = Environment(flask_app)
     style_bundle = Bundle('assets/scss/slider.scss',
                           filters='pyscss',  # https://webassets.readthedocs.io/en/latest/builtin_filters.html#pyscss
-                          output='dist/css/style.min.css',
+                          output='dist/css/slider.min.css',
                           extra={'rel': 'stylesheet/css'})
     assets.register('main_styles', style_bundle)
-    js_bundle = Bundle('assets/js/slider.js',
+    js_bundle = Bundle('assets/js/slider.js', 'assets/js/modal.js',
                        filters='rjsmin',  # https://webassets.readthedocs.io/en/latest/builtin_filters.html#rjsmin
-                       output='dist/js/main.min.js')
+                       output='dist/js/custom.min.js')
     assets.register('main_js', js_bundle)
     style_bundle.build()
     js_bundle.build()
@@ -85,6 +90,7 @@ def add_views(flask_app):
     MoodPlayerView.register(flask_app)
     LoginView.register(flask_app)
     SliderView.register(flask_app)
+    ConfigView.register(flask_app)
 
 
 def app_api(flask_app):
