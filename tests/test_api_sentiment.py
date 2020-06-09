@@ -18,31 +18,15 @@ class TestSentimentApi(unittest.TestCase, TestClientMixin):
         auth_token = self._auth_service.auth_token
 
         self._auth_service.authorized = False
-        response = self.test_client.get('/api/sentiment/1/playlist',
+        response = self.test_client.get('/api/sentiment/1/config',
                                         headers=dict(Authorization='Bearer {}'.format(auth_token)),
                                         follow_redirects=False)
         self.assertEqual(200, response.status_code, response)
-        self.assertIn(b'"name": "gm_mood_1"', response.data)
-
-    def test_invalid_sentiment(self):
-        self._auth_service.configure_secret_key(self.test_app.config['SECRET_KEY'])
-        self._auth_service.token = {'access_token': 'fake-token', 'expires_in': 1}
-        self._auth_service.authorized = True
-
-        with self.assertRaises(ValueError):
-            self.test_client.get('/api/sentiment/9/playlist',
-                                 headers=dict(Authorization='Bearer {}'.format(self._auth_service.auth_token)),
-                                 follow_redirects=False)
-
-        response = self.test_client.get('/api/sentiment/d/playlist',
-                                        headers=dict(Authorization='Bearer {}'.format(self._auth_service.auth_token)),
-                                        follow_redirects=False)
-
-        self.assertEqual(404, response.status_code, response)
+        self.assertIn(b'''{\n    "classification": {\n        "name": "1"\n    },''', response.data)
 
     def test_unauthenticated(self):
         with self.assertRaises(UnauthenticatedException):
-            response = self.test_client.get('/api/sentiment/1/playlist',
+            response = self.test_client.get('/api/sentiment/TEST/config',
                                             follow_redirects=False)
 
 

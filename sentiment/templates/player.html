@@ -9,6 +9,7 @@
         </header>
         {% if is_loggedin %}
         <button class="button" disabled="disabled" id="logged_in_user">Logged in as {{ username }}</button>
+        <input id="auth_token" type="hidden" value="{{auth_token}}">
         {% if is_analysed %}
         <button class="btn btn-primary btn-sm" disabled="disabled" id="btn_analysed">
             Music library analysed
@@ -44,38 +45,40 @@
 
 {% block main %}
 {% if is_analysed %}
+<!-- Modal -->
+<div aria-hidden="true" aria-labelledby="sentimentModalLabel" class="modal fade" id="sentimentModal" role="dialog"
+     tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content box">
+            <div class="modal-header">
+                <h3 class="modal-title" id="sentimentModalLabel">Modal title</h3>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
+                <button class="btn btn-primary" type="button">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Main -->
 <main id="main">
     <div class="inner">
         <!-- Boxes -->
         <div class="thumbnails">
-            <!-- Dynamic Modal -->
-            <div aria-hidden="true" aria-labelledby="FormModal" class="modal fade" id="Modal" role="dialog"
-                 tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content box">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Modal title</h5>
-                            <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Modal body text goes here.</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
-                            <button class="btn btn-primary" type="button">Save changes</button>
-                        </div>
-                        <!-- load content here -->
-                    </div>
-                </div>
-            </div>
-            <!-- End Dynamic Modal -->
+
             {% for category_player in category_players %}
             <div class="box" id="player_{{category_player.name}}">
                 <h2>{{category_player.name}}</h2>
-                <a class="edit-modal-opener" data-toggle="modal" href="#">Edit</a>
+                <button class="btn btn-primary" data-sentiment="{{category_player.name}}" data-target="#sentimentModal"
+                        data-toggle="modal"
+                        type="button">
+                    Edit
+                </button>
                 <span class="image fit"><img alt="" src="{{category_player.cover_url}}"/></span>
                 <div class="inner">
                     <iframe allow="encrypted-media" allowtransparency="true" frameborder="0" height="80"

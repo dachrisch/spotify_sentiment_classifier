@@ -26,8 +26,8 @@ class MoodPlayerView(FlaskView, SpotifyServiceMixin, DebugLogMixin):
         self._log.debug('library is {}'.format(self._is_analysed() and 'analysed' or 'not analysed'))
         category_players: List[CategoryPlayer] = self.category_players()
         return render_template('player.html', is_loggedin=self._valid_login(), is_analysed=(self._is_analysed()),
-                               username=self._username_if_logged_in(), auth_token=self.auth_service.auth_token,
-                               category_players=category_players)
+                               username=self._username_if_logged_in(), category_players=category_players,
+                               auth_token=self.auth_service.auth_token)
 
     def category_players(self):
         if not self._is_analysed():

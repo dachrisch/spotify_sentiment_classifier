@@ -40,12 +40,12 @@ def configure_assets(flask_app):
     assets = Environment(flask_app)
     style_bundle = Bundle('assets/scss/slider.scss',
                           filters='pyscss',  # https://webassets.readthedocs.io/en/latest/builtin_filters.html#pyscss
-                          output='dist/css/style.min.css',
+                          output='dist/css/slider.min.css',
                           extra={'rel': 'stylesheet/css'})
     assets.register('main_styles', style_bundle)
-    js_bundle = Bundle('assets/js/slider.js',
+    js_bundle = Bundle('assets/js/slider.js', 'assets/js/modal.js',
                        filters='rjsmin',  # https://webassets.readthedocs.io/en/latest/builtin_filters.html#rjsmin
-                       output='dist/js/main.min.js')
+                       output='dist/js/custom.min.js')
     assets.register('main_js', js_bundle)
     style_bundle.build()
     js_bundle.build()
